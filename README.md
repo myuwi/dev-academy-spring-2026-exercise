@@ -1,6 +1,6 @@
 # dev-academy-spring-2026-exercise
 
-This is the pre-assignment for Solita Dev Academy Finland January 2026. But if you’re here just purely out of curiosity, feel free to snatch the idea and make your own app just for the fun of it!
+This is the pre-assignment for Solita Dev Academy Finland March 2026. But if you’re here just purely out of curiosity, feel free to snatch the idea and make your own app just for the fun of it!
 
 Let's imagine that you have received an interesting project offer to create a UI and a backend service for displaying data from electricity production, consumption and prices. 
 The exercise uses data that is owned by Fingrid and combines that with electricity price data from porssisahko.net. 
