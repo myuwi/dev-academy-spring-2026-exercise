@@ -1,0 +1,71 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.electricitydata": {
+      "name": "electricitydata",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "starttime": {
+          "name": "starttime",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "productionamount": {
+          "name": "productionamount",
+          "type": "numeric(11, 5)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "consumptionamount": {
+          "name": "consumptionamount",
+          "type": "numeric(11, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hourlyprice": {
+          "name": "hourlyprice",
+          "type": "numeric(6, 3)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {}
+  }
+}
