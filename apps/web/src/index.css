@@ -1,68 +1,43 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@theme {
+  --font-sans: "Rubik", sans-serif;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  --color-background: var(--color-white);
+  --color-primary: var(--color-zinc-700);
+  --color-subtle: var(--color-zinc-600);
+  --color-secondary: var(--color-zinc-100);
+  --color-border: --alpha(var(--color-black) / 10%);
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  @apply bg-background text-primary;
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  @apply mb-6 text-2xl;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.ui-button {
+  @apply rounded-lg p-2 not-disabled:hover:bg-secondary disabled:opacity-50 [&>svg]:size-5;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+.ui-table {
+  @apply w-full text-sm leading-5;
+
+  th {
+    @apply bg-secondary px-4 py-3 text-left align-middle font-medium text-subtle;
   }
-  a:hover {
-    color: #747bff;
+
+  td {
+    @apply border-t border-t-border px-4 py-3 align-middle;
   }
-  button {
-    background-color: #f9f9f9;
-  }
+}
+
+.ui-input {
+  @apply h-9 rounded-lg border border-border px-2 py-1.5 invalid:border-red-500/30 invalid:bg-red-500/10 aria-invalid:border-red-500/30 aria-invalid:bg-red-500/10;
+}
+
+.ui-select {
+  @apply h-9 rounded-lg border border-border px-2 py-1.5;
 }
