@@ -11,7 +11,7 @@ interface Stat {
 
 type StatsOptionsParams = {
   sortBy?: string;
-  sortDirection?: string;
+  sortDirection?: "asc" | "desc";
   offset?: number;
   limit?: number;
 };
