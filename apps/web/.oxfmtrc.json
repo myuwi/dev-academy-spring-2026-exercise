@@ -1,5 +1,17 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "experimentalSortImports": {
+    "groups": [
+      ["side-effect"],
+      ["side-effect-style"],
+      ["style"],
+      ["builtin"],
+      ["external"],
+      ["internal", "subpath"],
+      ["unknown"]
+    ],
+    "newlinesBetween": false
+  },
   "experimentalTailwindcss": {
     "stylesheet": "./src/index.css"
   }

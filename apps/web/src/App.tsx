@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Stats } from "@/pages/Stats";
 import { NuqsAdapter } from "nuqs/adapters/react";
+import { Stats } from "@/pages/Stats";
 
 const queryClient = new QueryClient({
   defaultOptions: {

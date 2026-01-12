@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { statsOptions } from "@/queries/stats";
 import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { Pagination } from "@/components/Pagination";
 import { SortIndicator } from "@/components/SortIndicator";
+import { statsOptions } from "@/queries/stats";
 
 const formatNumber = (value: number) => {
   return value.toFixed(2);
