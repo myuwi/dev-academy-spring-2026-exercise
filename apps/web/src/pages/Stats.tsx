@@ -4,6 +4,10 @@ import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { Pagination } from "@/components/Pagination";
 import { ChevronDown, ChevronsUpDown, ChevronUp } from "lucide-react";
 
+const formatNumber = (value: number) => {
+  return value.toFixed(2);
+};
+
 export const Stats = () => {
   const [page, setPage] = useQueryState(
     "page",
@@ -62,7 +66,7 @@ export const Stats = () => {
               </th>
               <th>
                 <button className="ui-button -ml-2" onClick={() => handleSort("totalProduction")}>
-                  Total Production
+                  Total Production (MWh)
                   {sortBy === "totalProduction" ? (
                     sortDirection === "asc" ? (
                       <ChevronUp className="size-4" />
@@ -76,7 +80,7 @@ export const Stats = () => {
               </th>
               <th>
                 <button className="ui-button -ml-2" onClick={() => handleSort("totalConsumption")}>
-                  Total Consumption
+                  Total Consumption (MWh)
                   {sortBy === "totalConsumption" ? (
                     sortDirection === "asc" ? (
                       <ChevronUp className="size-4" />
@@ -90,7 +94,7 @@ export const Stats = () => {
               </th>
               <th>
                 <button className="ui-button -ml-2" onClick={() => handleSort("averagePrice")}>
-                  Average Price
+                  Average Price (c/kWh)
                   {sortBy === "averagePrice" ? (
                     sortDirection === "asc" ? (
                       <ChevronUp className="size-4" />
@@ -107,7 +111,7 @@ export const Stats = () => {
                   className="ui-button -ml-2"
                   onClick={() => handleSort("longestNegativeHours")}
                 >
-                  Longest Negative Hours
+                  Longest Negative Price Streak (hrs)
                   {sortBy === "longestNegativeHours" ? (
                     sortDirection === "asc" ? (
                       <ChevronUp className="size-4" />
@@ -127,9 +131,9 @@ export const Stats = () => {
                 return (
                   <tr key={date}>
                     <td>{date}</td>
-                    <td>{totalProduction ?? "No data"}</td>
-                    <td>{totalConsumption ?? "No data"}</td>
-                    <td>{averagePrice ?? "No data"}</td>
+                    <td>{totalProduction ? formatNumber(totalProduction) : "No data"}</td>
+                    <td>{totalConsumption ? formatNumber(totalConsumption) : "No data"}</td>
+                    <td>{averagePrice ? formatNumber(averagePrice) : "No data"}</td>
                     <td>{longestNegativeHours}</td>
                   </tr>
                 );

@@ -30,7 +30,7 @@ svg {
   @apply w-full text-sm leading-5;
 
   th {
-    @apply h-10 bg-secondary/25 px-4 text-left align-middle font-medium text-subtle;
+    @apply min-h-10 bg-secondary/25 px-4 py-1 text-left align-middle font-medium text-subtle;
   }
 
   td {

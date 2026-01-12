@@ -55,7 +55,10 @@ stats.get("/", zValidator("query", QuerySchema), async (c) => {
     .select({
       date: electricityData.date,
       totalProduction: sum(electricityData.productionAmount).mapWith(NumberNullable),
-      totalConsumption: sum(electricityData.consumptionAmount).mapWith(NumberNullable),
+      // Convert from kWh to MWh
+      totalConsumption: sql`${sum(electricityData.consumptionAmount)} / 1000`.mapWith(
+        NumberNullable,
+      ),
       averagePrice: avg(electricityData.hourlyPrice).mapWith(NumberNullable),
       longestNegativeHours: coalesce(max(negativeStreakLengths.length), "0").mapWith(Number),
     })
