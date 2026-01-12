@@ -1,15 +1,28 @@
-import { and, avg, count, desc, eq, lt, max, sql, sum } from "drizzle-orm";
+import { zValidator } from "@hono/zod-validator";
+import { and, avg, count, countDistinct, desc, eq, lt, max, sql, sum } from "drizzle-orm";
 import { Hono } from "hono";
+import * as z from "zod";
 import { db } from "../db";
 import { electricityData } from "../db/schema";
 import { coalesce } from "../db/utils";
 
-const stats = new Hono();
-
 // drizzle's mapWith method drops null from nullable columns, so use a helper to keep it
 const NumberNullable = (c: unknown): number | null => Number(c);
 
-stats.get("/", async (c) => {
+const stats = new Hono();
+
+const QuerySchema = z.object({
+  limit: z.coerce.number().min(1).max(500).optional(),
+  offset: z.coerce.number().min(0).optional(),
+});
+
+stats.get("/", zValidator("query", QuerySchema), async (c) => {
+  const { limit = 50, offset = 0 } = c.req.valid("query");
+
+  const { totalCount } = (
+    await db.select({ totalCount: countDistinct(electricityData.date) }).from(electricityData)
+  )[0];
+
   const negativeStreaks = db
     .select({
       date: electricityData.date,
@@ -52,10 +65,13 @@ stats.get("/", async (c) => {
     )
     .groupBy(electricityData.date)
     .orderBy(desc(electricityData.date))
-    .limit(50)
-    .offset(0);
+    .limit(limit)
+    .offset(offset);
 
-  return c.json(data);
+  return c.json({
+    data,
+    count: totalCount,
+  });
 });
 
 export default stats;
