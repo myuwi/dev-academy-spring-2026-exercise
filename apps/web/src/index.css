@@ -15,7 +15,7 @@ body {
 }
 
 h1 {
-  @apply mb-6 text-2xl;
+  @apply text-2xl;
 }
 
 svg {
@@ -23,7 +23,7 @@ svg {
 }
 
 .ui-button {
-  @apply flex items-center gap-1 rounded-lg p-2 text-left not-disabled:hover:bg-secondary disabled:opacity-50 [&_svg:not([class*='size-'])]:size-5;
+  @apply flex items-center gap-1 rounded-lg p-2 text-left transition-colors not-disabled:hover:bg-secondary disabled:opacity-50 [&_svg:not([class*='size-'])]:size-5;
 }
 
 .ui-table {
@@ -39,9 +39,27 @@ svg {
 }
 
 .ui-input {
-  @apply h-9 rounded-lg border border-border px-2 py-1.5 invalid:border-red-500/30 invalid:bg-red-500/10 aria-invalid:border-red-500/30 aria-invalid:bg-red-500/10;
+  @apply inline-flex h-9 items-center gap-2 rounded-lg border border-border px-2 py-1.5 text-sm invalid:border-red-500/30 invalid:bg-red-500/10 aria-invalid:border-red-500/30 aria-invalid:bg-red-500/10;
+
+  &:where(input) {
+    @apply inline-flex;
+  }
+
+  :where(input) {
+    @apply inline-flex h-full w-full appearance-none border-0 bg-transparent;
+
+    &:focus,
+    &:focus-within {
+      outline: none;
+    }
+  }
+
+  &:focus-visible,
+  &:focus-within {
+    outline: auto;
+  }
 }
 
 .ui-select {
-  @apply h-9 rounded-lg border border-border px-2 py-1.5;
+  @apply h-9 rounded-lg border border-border px-2 py-1.5 text-sm;
 }

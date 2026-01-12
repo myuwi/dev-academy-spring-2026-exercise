@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { Pagination } from "@/components/Pagination";
+import { Search } from "@/components/Search";
 import { SortIndicator } from "@/components/SortIndicator";
 import { statsOptions } from "@/queries/stats";
 
@@ -27,11 +28,16 @@ export const Stats = () => {
       .withDefault("desc")
       .withOptions({ history: "push", clearOnDefault: false }),
   );
+  const [query, setQuery] = useQueryState(
+    "q",
+    parseAsString.withDefault("").withOptions({ history: "push" }),
+  );
 
   const { data: stats } = useQuery({
     ...statsOptions({
       sortBy,
       sortDirection,
+      search: query || undefined,
       offset: (page - 1) * pageSize,
       limit: pageSize,
     }),
@@ -44,9 +50,18 @@ export const Stats = () => {
     setPage(1);
   };
 
+  const handleSearch = (query: string) => {
+    setQuery(query);
+    setPage(1);
+  };
+
   return (
     <div className="mx-auto my-6 max-w-6xl space-y-2 px-4">
-      <h1>Electricity Statistics</h1>
+      <h1 className="mb-4">Electricity Statistics</h1>
+
+      <div>
+        <Search value={query} onChange={handleSearch} />
+      </div>
 
       <div className="overflow-x-auto rounded-lg border border-border">
         <table className="ui-table">

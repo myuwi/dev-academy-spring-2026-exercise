@@ -1,5 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
-import { and, avg, count, countDistinct, eq, lt, max, sql, sum } from "drizzle-orm";
+import { and, avg, count, countDistinct, eq, ilike, lt, max, sql, sum } from "drizzle-orm";
 import { Hono } from "hono";
 import * as z from "zod";
 import { db } from "../db";
@@ -16,15 +16,27 @@ const QuerySchema = z.object({
     .enum(["date", "totalProduction", "totalConsumption", "averagePrice", "longestNegativeHours"])
     .optional(),
   sortDirection: z.enum(["asc", "desc"]).optional(),
+  search: z.string().optional(),
   limit: z.coerce.number().min(1).max(500).optional(),
   offset: z.coerce.number().min(0).optional(),
 });
 
 stats.get("/", zValidator("query", QuerySchema), async (c) => {
-  const { limit = 50, offset = 0, sortBy = "date", sortDirection = "asc" } = c.req.valid("query");
+  const {
+    limit = 50,
+    offset = 0,
+    sortBy = "date",
+    sortDirection = "asc",
+    search = "",
+  } = c.req.valid("query");
+
+  const whereClause = search ? ilike(sql`${electricityData.date}::text`, `%${search}%`) : undefined;
 
   const { totalCount } = (
-    await db.select({ totalCount: countDistinct(electricityData.date) }).from(electricityData)
+    await db
+      .select({ totalCount: countDistinct(electricityData.date) })
+      .from(electricityData)
+      .where(whereClause)
   )[0];
 
   const negativeStreaks = db
@@ -63,6 +75,7 @@ stats.get("/", zValidator("query", QuerySchema), async (c) => {
       longestNegativeHours: coalesce(max(negativeStreakLengths.length), "0").mapWith(Number),
     })
     .from(electricityData)
+    .where(whereClause)
     .leftJoin(
       negativeStreakLengths,
       and(
