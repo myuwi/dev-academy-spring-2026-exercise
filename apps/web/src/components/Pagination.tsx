@@ -45,7 +45,7 @@ export const Pagination = ({
   };
 
   return (
-    <div className="flex items-center justify-between gap-2 text-sm">
+    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-sm">
       <div>
         Showing {(page - 1) * pageSize + 1}-{page * pageSize} of {total}
       </div>
@@ -73,7 +73,7 @@ export const Pagination = ({
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-end gap-2">
         Show per page:
         <select className="ui-select" value={pageSize} onChange={handlePageSizeChange}>
           {pageSizes.map((s) => {
