@@ -5,8 +5,8 @@
 
   --color-background: var(--color-white);
   --color-primary: var(--color-zinc-700);
-  --color-subtle: var(--color-zinc-600);
   --color-secondary: var(--color-zinc-100);
+  --color-subtle: var(--color-zinc-600);
   --color-border: --alpha(var(--color-black) / 10%);
 }
 
@@ -18,15 +18,19 @@ h1 {
   @apply mb-6 text-2xl;
 }
 
+svg {
+  @apply shrink-0;
+}
+
 .ui-button {
-  @apply rounded-lg p-2 not-disabled:hover:bg-secondary disabled:opacity-50 [&>svg]:size-5;
+  @apply flex items-center gap-1 rounded-lg p-2 text-left not-disabled:hover:bg-secondary disabled:opacity-50 [&_svg:not([class*='size-'])]:size-5;
 }
 
 .ui-table {
   @apply w-full text-sm leading-5;
 
   th {
-    @apply bg-secondary px-4 py-3 text-left align-middle font-medium text-subtle;
+    @apply h-10 bg-secondary/25 px-4 text-left align-middle font-medium text-subtle;
   }
 
   td {

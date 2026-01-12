@@ -1,5 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
-import { and, avg, count, countDistinct, desc, eq, lt, max, sql, sum } from "drizzle-orm";
+import { and, avg, count, countDistinct, eq, lt, max, sql, sum } from "drizzle-orm";
 import { Hono } from "hono";
 import * as z from "zod";
 import { db } from "../db";
@@ -12,12 +12,16 @@ const NumberNullable = (c: unknown): number | null => Number(c);
 const stats = new Hono();
 
 const QuerySchema = z.object({
+  sortBy: z
+    .enum(["date", "totalProduction", "totalConsumption", "averagePrice", "longestNegativeHours"])
+    .optional(),
+  sortDirection: z.enum(["asc", "desc"]).optional(),
   limit: z.coerce.number().min(1).max(500).optional(),
   offset: z.coerce.number().min(0).optional(),
 });
 
 stats.get("/", zValidator("query", QuerySchema), async (c) => {
-  const { limit = 50, offset = 0 } = c.req.valid("query");
+  const { limit = 50, offset = 0, sortBy = "date", sortDirection = "asc" } = c.req.valid("query");
 
   const { totalCount } = (
     await db.select({ totalCount: countDistinct(electricityData.date) }).from(electricityData)
@@ -64,7 +68,11 @@ stats.get("/", zValidator("query", QuerySchema), async (c) => {
       ),
     )
     .groupBy(electricityData.date)
-    .orderBy(desc(electricityData.date))
+    .orderBy((stats) =>
+      sortDirection === "asc"
+        ? sql`${stats[sortBy]} ASC NULLS FIRST`
+        : sql`${stats[sortBy]} DESC NULLS LAST`,
+    )
     .limit(limit)
     .offset(offset);
 

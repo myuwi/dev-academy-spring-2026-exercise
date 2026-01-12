@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { statsOptions } from "@/queries/stats";
-import { parseAsInteger, useQueryState } from "nuqs";
+import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { Pagination } from "@/components/Pagination";
+import { ChevronDown, ChevronsUpDown, ChevronUp } from "lucide-react";
 
 export const Stats = () => {
   const [page, setPage] = useQueryState(
@@ -10,16 +11,32 @@ export const Stats = () => {
   );
   const [pageSize, setPageSize] = useQueryState(
     "pageSize",
-    parseAsInteger.withDefault(15).withOptions({ history: "push" }),
+    parseAsInteger.withDefault(15).withOptions({ history: "push", clearOnDefault: false }),
+  );
+  const [sortBy, setSortBy] = useQueryState(
+    "sortBy",
+    parseAsString.withDefault("date").withOptions({ history: "push", clearOnDefault: false }),
+  );
+  const [sortDirection, setSortDirection] = useQueryState(
+    "sortDirection",
+    parseAsString.withDefault("desc").withOptions({ history: "push", clearOnDefault: false }),
   );
 
   const { data: stats } = useQuery({
     ...statsOptions({
+      sortBy,
+      sortDirection,
       offset: (page - 1) * pageSize,
       limit: pageSize,
     }),
     placeholderData: (prev) => prev,
   });
+
+  const handleSort = (column: string) => {
+    setSortBy(column);
+    setSortDirection(sortBy === column && sortDirection === "asc" ? "desc" : "asc");
+    setPage(1);
+  };
 
   return (
     <div className="mx-auto my-6 max-w-6xl space-y-2 px-4">
@@ -29,11 +46,79 @@ export const Stats = () => {
         <table className="ui-table">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Total Production</th>
-              <th>Total Consumption</th>
-              <th>Average Price</th>
-              <th>Longest Negative Hours</th>
+              <th>
+                <button className="ui-button -ml-2" onClick={() => handleSort("date")}>
+                  Date
+                  {sortBy === "date" ? (
+                    sortDirection === "asc" ? (
+                      <ChevronUp className="size-4" />
+                    ) : (
+                      <ChevronDown className="size-4" />
+                    )
+                  ) : (
+                    <ChevronsUpDown className="size-4 text-subtle/50" />
+                  )}
+                </button>
+              </th>
+              <th>
+                <button className="ui-button -ml-2" onClick={() => handleSort("totalProduction")}>
+                  Total Production
+                  {sortBy === "totalProduction" ? (
+                    sortDirection === "asc" ? (
+                      <ChevronUp className="size-4" />
+                    ) : (
+                      <ChevronDown className="size-4" />
+                    )
+                  ) : (
+                    <ChevronsUpDown className="size-4 text-subtle/50" />
+                  )}
+                </button>
+              </th>
+              <th>
+                <button className="ui-button -ml-2" onClick={() => handleSort("totalConsumption")}>
+                  Total Consumption
+                  {sortBy === "totalConsumption" ? (
+                    sortDirection === "asc" ? (
+                      <ChevronUp className="size-4" />
+                    ) : (
+                      <ChevronDown className="size-4" />
+                    )
+                  ) : (
+                    <ChevronsUpDown className="size-4 text-subtle/50" />
+                  )}
+                </button>
+              </th>
+              <th>
+                <button className="ui-button -ml-2" onClick={() => handleSort("averagePrice")}>
+                  Average Price
+                  {sortBy === "averagePrice" ? (
+                    sortDirection === "asc" ? (
+                      <ChevronUp className="size-4" />
+                    ) : (
+                      <ChevronDown className="size-4" />
+                    )
+                  ) : (
+                    <ChevronsUpDown className="size-4 text-subtle/50" />
+                  )}
+                </button>
+              </th>
+              <th>
+                <button
+                  className="ui-button -ml-2"
+                  onClick={() => handleSort("longestNegativeHours")}
+                >
+                  Longest Negative Hours
+                  {sortBy === "longestNegativeHours" ? (
+                    sortDirection === "asc" ? (
+                      <ChevronUp className="size-4" />
+                    ) : (
+                      <ChevronDown className="size-4" />
+                    )
+                  ) : (
+                    <ChevronsUpDown className="size-4 text-subtle/50" />
+                  )}
+                </button>
+              </th>
             </tr>
           </thead>
           <tbody>
