@@ -1,7 +1,9 @@
 {
   "name": "backend",
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot src/index.ts",
+    "test": "bun test",
+    "lint": "oxlint"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.7.6",

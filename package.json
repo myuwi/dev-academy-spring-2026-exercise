@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "scripts": {
+    "preinstall": "bunx --bun only-allow bun",
+    "dev": "bun --filter '*' dev",
+    "docker": "docker compose up --build --renew-anon-volumes",
+    "lint": "bun --filter '*' lint",
+    "test": "bun --filter './apps/*' test",
+    "test:e2e": "bun --filter './e2e' test"
+  },
+  "workspaces": [
+    "apps/*",
+    "e2e"
+  ]
+}
