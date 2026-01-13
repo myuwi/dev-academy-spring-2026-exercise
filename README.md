@@ -51,9 +51,12 @@ If you wish, you may also briefly describe **where and how you used any such too
 
 ## Surprise us with
 
-- Running backend in Docker
-- Running backend in Cloud
-- Implement E2E tests
+- [x] Implement backend integration tests
+- [ ] Implement E2E tests
+- [ ] Pre-commit hooks for lint/tests
+- [ ] CI/CD for lint/tests/docker
+- [ ] Running backend in Docker
+- [ ] Running backend in Cloud
 
 # Instructions for running the database
 

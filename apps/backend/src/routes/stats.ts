@@ -9,8 +9,6 @@ import { coalesce } from "../db/utils";
 // drizzle's mapWith method drops null from nullable columns, so use a helper to keep it
 const NumberNullable = (c: unknown): number | null => Number(c);
 
-const stats = new Hono();
-
 const QuerySchema = z.object({
   sortBy: z
     .enum(["date", "totalProduction", "totalConsumption", "averagePrice", "longestNegativeHours"])
@@ -20,6 +18,8 @@ const QuerySchema = z.object({
   limit: z.coerce.number().min(1).max(500).optional(),
   offset: z.coerce.number().min(0).optional(),
 });
+
+const stats = new Hono();
 
 stats.get("/", zValidator("query", QuerySchema), async (c) => {
   const {
