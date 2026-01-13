@@ -1,0 +1,87 @@
+{
+  "id": "5d930c08-f646-4072-bf37-7c2dd4ddee57",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.electricitydata": {
+      "name": "electricitydata",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "electricitydata_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "date": {
+          "name": "date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "starttime": {
+          "name": "starttime",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "productionamount": {
+          "name": "productionamount",
+          "type": "numeric(11, 5)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "consumptionamount": {
+          "name": "consumptionamount",
+          "type": "numeric(11, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hourlyprice": {
+          "name": "hourlyprice",
+          "type": "numeric(6, 3)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "electricitydata_starttime_unique": {
+          "name": "electricitydata_starttime_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "starttime"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

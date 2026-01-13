@@ -1,4 +1,4 @@
-CREATE TABLE "electricitydata" (
+CREATE TABLE IF NOT EXISTS "electricitydata" (
 	"id" bigint PRIMARY KEY NOT NULL,
 	"date" date,
 	"starttime" timestamp,

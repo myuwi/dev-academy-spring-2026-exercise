@@ -8,6 +8,13 @@
       "when": 1767964311162,
       "tag": "0000_sticky_star_brand",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1768319778837,
+      "tag": "0001_fantastic_quasimodo",
+      "breakpoints": true
     }
   ]
 }

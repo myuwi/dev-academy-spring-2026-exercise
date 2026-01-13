@@ -33,7 +33,7 @@ describe("GET /stats", async () => {
 
     expect(res.status).toBe(200);
 
-    const json = await res.json();
+    const json = await res.json() as any;
     expect(json.data).toBeArrayOfSize(7);
     expect(json.count).toBe(7);
   });
@@ -45,7 +45,7 @@ describe("GET /stats", async () => {
 
     expect(res.status).toBe(200);
 
-    const json = await res.json();
+    const json = await res.json() as any;
     expect(json.data[0].longestNegativeHours).toBe(0);
     expect(json.data[1].longestNegativeHours).toBe(5);
     expect(json.data[2].longestNegativeHours).toBe(1);
@@ -58,7 +58,7 @@ describe("GET /stats", async () => {
 
     expect(res.status).toBe(200);
 
-    const json = await res.json();
+    const json = await res.json() as any;
     const sorted = [...json.data].sort(asc("date"));
 
     expect(json.data).toEqual(sorted);
@@ -71,7 +71,7 @@ describe("GET /stats", async () => {
 
     expect(res.status).toBe(200);
 
-    const json = await res.json();
+    const json = await res.json() as any;
     const sorted = [...json.data].sort(desc("date"));
 
     expect(json.data).toEqual(sorted);
@@ -84,7 +84,7 @@ describe("GET /stats", async () => {
 
     expect(res.status).toBe(200);
 
-    const json = await res.json();
+    const json = await res.json() as any;
     const sorted = [...json.data].sort(desc("averagePrice"));
 
     expect(json.data).toEqual(sorted);
@@ -97,7 +97,7 @@ describe("GET /stats", async () => {
 
     expect(res.status).toBe(200);
 
-    const json = await res.json();
+    const json = await res.json() as any;
     const sorted = [...json.data].sort(asc("averagePrice"));
 
     expect(json.data).toEqual(sorted);
@@ -110,7 +110,7 @@ describe("GET /stats", async () => {
 
     expect(res.status).toBe(200);
 
-    const json = await res.json();
+    const json = await res.json() as any;
     expect(json.data[0].totalConsumption).toBeNull();
     expect(json.data[json.data.length - 1].totalConsumption).not.toBeNull();
   });
@@ -122,7 +122,7 @@ describe("GET /stats", async () => {
 
     expect(res.status).toBe(200);
 
-    const json = await res.json();
+    const json = await res.json() as any;
     expect(json.data[0].totalConsumption).not.toBeNull();
     expect(json.data[json.data.length - 1].totalConsumption).toBeNull();
   });
@@ -134,7 +134,7 @@ describe("GET /stats", async () => {
 
     expect(res.status).toBe(200);
 
-    const json = await res.json();
+    const json = await res.json() as any;
     expect(json.data).toBeArrayOfSize(2);
     expect(json.count).toBe(7);
 
@@ -149,7 +149,7 @@ describe("GET /stats", async () => {
 
     expect(res.status).toBe(200);
 
-    const json = await res.json();
+    const json = await res.json() as any;
     expect(json.data).toBeArrayOfSize(4);
     expect(json.count).toBe(4);
 
@@ -166,7 +166,7 @@ describe("GET /stats", async () => {
 
     expect(res.status).toBe(200);
 
-    const json = await res.json();
+    const json = await res.json() as any;
     expect(json.data).toBeArrayOfSize(0);
     expect(json.count).toBe(0);
   });

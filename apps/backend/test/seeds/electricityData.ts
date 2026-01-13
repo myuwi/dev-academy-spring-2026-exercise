@@ -26,7 +26,6 @@ export const seedElectricityData = async () => {
       const consumptionAmount = d !== 3 ? "4000000" : null;
 
       rows.push({
-        id: d * 24 + h + 1,
         date: startTime.toISOString().slice(0, 10), // "YYYY-MM-DD"
         startTime: startTime.toISOString(),
         productionAmount: "30000", // MWh
