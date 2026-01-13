@@ -45,14 +45,14 @@ export const Stats = () => {
   });
 
   const handleSort = (column: string) => {
-    setSortBy(column);
-    setSortDirection(sortBy === column && sortDirection === "desc" ? "asc" : "desc");
-    setPage(1);
+    void setSortBy(column);
+    void setSortDirection(sortBy === column && sortDirection === "desc" ? "asc" : "desc");
+    void setPage(1);
   };
 
   const handleSearch = (query: string) => {
-    setQuery(query);
-    setPage(1);
+    void setQuery(query);
+    void setPage(1);
   };
 
   return (

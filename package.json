@@ -4,7 +4,7 @@
     "preinstall": "bunx --bun only-allow bun",
     "dev": "bun --filter '*' dev",
     "docker": "docker compose up --build --renew-anon-volumes",
-    "lint": "bun --filter '*' lint",
+    "lint": "oxlint --type-aware",
     "test": "bun --filter './apps/*' test",
     "test:e2e": "bun --filter './e2e' test",
     "prepare": "husky"
@@ -14,6 +14,9 @@
     "e2e"
   ],
   "devDependencies": {
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "oxfmt": "^0.24.0",
+    "oxlint": "^1.39.0",
+    "oxlint-tsgolint": "^0.11.0"
   }
 }

@@ -10,7 +10,7 @@ const db = drizzle({
   schema,
 });
 
-mock.module("../src/db", () => {
+await mock.module("../src/db", () => {
   return { db };
 });
 
