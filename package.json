@@ -6,10 +6,14 @@
     "docker": "docker compose up --build --renew-anon-volumes",
     "lint": "bun --filter '*' lint",
     "test": "bun --filter './apps/*' test",
-    "test:e2e": "bun --filter './e2e' test"
+    "test:e2e": "bun --filter './e2e' test",
+    "prepare": "husky"
   },
   "workspaces": [
     "apps/*",
     "e2e"
-  ]
+  ],
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
 }
