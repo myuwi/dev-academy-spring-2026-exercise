@@ -82,13 +82,13 @@ test.describe("Stats page", () => {
       const totalProductionHeader = page.getByText(/Total Production/);
 
       await totalProductionHeader.click();
-      expect(totalProductionHeader.getByLabel("Descending")).toBeVisible();
+      await expect(totalProductionHeader.getByLabel("Descending")).toBeVisible();
 
       await totalProductionHeader.click();
-      expect(totalProductionHeader.getByLabel("Ascending")).toBeVisible();
+      await expect(totalProductionHeader.getByLabel("Ascending")).toBeVisible();
 
       await totalProductionHeader.click();
-      expect(totalProductionHeader.getByLabel("Descending")).toBeVisible();
+      await expect(totalProductionHeader.getByLabel("Descending")).toBeVisible();
     });
 
     test("user sorts while on page 3; lands on first page and table stays sorted", async ({
@@ -99,10 +99,10 @@ test.describe("Stats page", () => {
       const totalProductionHeader = page.getByText(/Total Production/);
       await totalProductionHeader.click();
 
-      expect(
+      await expect(
         page.getByRole("textbox", { name: "Current Page Number" }),
       ).toHaveValue("1");
-      expect(totalProductionHeader.getByLabel("Descending")).toBeVisible();
+      await expect(totalProductionHeader.getByLabel("Descending")).toBeVisible();
     });
   });
 
@@ -119,7 +119,7 @@ test.describe("Stats page", () => {
 
       await expect(page).toHaveURL(/page=4/);
 
-      expect(
+      await expect(
         page.getByRole("textbox", { name: "Current Page Number" }),
       ).toHaveValue("4");
     });
@@ -149,7 +149,7 @@ test.describe("Stats page", () => {
 
       await expect(page).toHaveURL((url) => !url.searchParams.has("page"));
 
-      expect(
+      await expect(
         page.getByRole("textbox", { name: "Current Page Number" }),
       ).toHaveValue("1");
 
