@@ -6,7 +6,7 @@
     "docker": "docker compose up --build --renew-anon-volumes",
     "lint": "oxlint --type-aware",
     "test": "bun --filter './apps/*' test",
-    "test:e2e": "bun --filter './e2e' test",
+    "test:e2e": "bun --cwd e2e test",
     "prepare": "husky"
   },
   "workspaces": [

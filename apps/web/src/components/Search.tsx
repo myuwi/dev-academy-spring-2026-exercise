@@ -25,7 +25,7 @@ export const Search = ({ value: valueProp, onChange }: SearchProps) => {
 
   return (
     <form onSubmit={handleSubmit} onReset={handleReset}>
-      <label className="ui-input w-xs">
+      <label className="ui-input w-xs" role="search" aria-label="Search bar">
         <SearchIcon className="size-4 opacity-50" />
         <input
           placeholder="Search by date"
@@ -36,7 +36,7 @@ export const Search = ({ value: valueProp, onChange }: SearchProps) => {
           <button
             className="opacity-50 transition-opacity hover:opacity-75"
             type="reset"
-            aria-label="Clear Button"
+            aria-label="Clear Search"
           >
             <X className="size-4" />
           </button>

@@ -57,12 +57,12 @@ describe("Search", () => {
     await user.type(input, "foo");
 
     expect(screen.getByDisplayValue("foo")).toBeInTheDocument();
-    expect(screen.getByLabelText("Clear Button")).toBeInTheDocument();
+    expect(screen.getByLabelText("Clear Search")).toBeInTheDocument();
 
     await user.type(input, "{backspace}{backspace}{backspace}");
     expect(screen.getByDisplayValue("")).toBeInTheDocument();
 
-    expect(screen.queryByLabelText("Clear Button")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Clear Search")).not.toBeInTheDocument();
   });
 
   it("should clear the input when clear button is clicked", async () => {
@@ -71,7 +71,7 @@ describe("Search", () => {
 
     render(<Search value="foo" onChange={handleChange} />);
 
-    const clearButton = screen.getByLabelText("Clear Button");
+    const clearButton = screen.getByLabelText("Clear Search");
     await user.click(clearButton);
 
     expect(handleChange).toHaveBeenCalledTimes(1);

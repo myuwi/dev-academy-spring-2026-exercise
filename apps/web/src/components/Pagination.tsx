@@ -52,7 +52,12 @@ export const Pagination = ({
 
       <div className="flex gap-2">
         <div className="flex">
-          <button className="ui-button" onClick={goPrevious} disabled={!hasPrevious}>
+          <button
+            className="ui-button"
+            onClick={goPrevious}
+            disabled={!hasPrevious}
+            aria-label="Previous Page"
+          >
             <ChevronLeft />
           </button>
         </div>
@@ -60,6 +65,7 @@ export const Pagination = ({
           <input
             className="ui-input w-11 text-center"
             inputMode="numeric"
+            aria-label="Current Page Number"
             aria-invalid={!valid}
             value={value}
             onChange={(e) => setValue(e.target.value)}
@@ -67,7 +73,7 @@ export const Pagination = ({
           of {maxPage}
         </form>
         <div className="flex">
-          <button className="ui-button" onClick={goNext} disabled={!hasNext}>
+          <button className="ui-button" onClick={goNext} disabled={!hasNext} aria-label="Next Page">
             <ChevronRight />
           </button>
         </div>
@@ -75,7 +81,12 @@ export const Pagination = ({
 
       <div className="flex items-center justify-end gap-2">
         Show per page:
-        <select className="ui-select" value={pageSize} onChange={handlePageSizeChange}>
+        <select
+          className="ui-select"
+          value={pageSize}
+          onChange={handlePageSizeChange}
+          aria-label="Show per page"
+        >
           {pageSizes.map((s) => {
             return (
               <option key={s} value={s}>

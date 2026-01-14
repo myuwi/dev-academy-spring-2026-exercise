@@ -64,7 +64,7 @@ export const Stats = () => {
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-border">
-        <table className="ui-table">
+        <table className="ui-table" aria-label="Data Table">
           <thead>
             <tr>
               <th>
