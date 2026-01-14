@@ -1,13 +1,32 @@
 @import "tailwindcss";
 
+:root {
+  --background: var(--color-white);
+  --primary: var(--color-zinc-700);
+  --secondary: var(--color-zinc-100);
+  --subtle: var(--color-zinc-600);
+  --border: --alpha(var(--color-black) / 10%);
+  --ring: --alpha(var(--color-black) / 20%);
+}
+
+.dark {
+  --background: var(--color-zinc-900);
+  --primary: var(--color-zinc-200);
+  --secondary: var(--color-zinc-800);
+  --subtle: var(--color-zinc-300);
+  --border: --alpha(var(--color-white) / 10%);
+  --ring: --alpha(var(--color-white) / 20%);
+}
+
 @theme {
   --font-sans: "Rubik", sans-serif;
 
-  --color-background: var(--color-white);
-  --color-primary: var(--color-zinc-700);
-  --color-secondary: var(--color-zinc-100);
-  --color-subtle: var(--color-zinc-600);
-  --color-border: --alpha(var(--color-black) / 10%);
+  --color-background: var(--background);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-subtle: var(--subtle);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
 }
 
 body {

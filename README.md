@@ -62,6 +62,7 @@ If you wish, you may also briefly describe **where and how you used any such too
 - [ ] CI/CD for lint/tests/docker
 - [x] Running backend in Docker
 - [ ] Running backend in Cloud
+- [x] Dark mode 😎
 - [ ] i18n
 
 # Instructions for running the database

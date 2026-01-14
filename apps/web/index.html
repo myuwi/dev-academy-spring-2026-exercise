@@ -10,6 +10,13 @@
       rel="stylesheet"
     />
     <link href="/src/index.css" rel="stylesheet" />
+    <script>
+      document.documentElement.classList.toggle(
+        "dark",
+        localStorage.theme === "dark" ||
+          (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches),
+      );
+    </script>
     <title>Electricity Statistics</title>
   </head>
   <body>

@@ -7,8 +7,8 @@ on:
       - main
 
 jobs:
-  test:
-    name: Test
+  test-and-build:
+    name: Test and Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

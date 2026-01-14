@@ -3,6 +3,7 @@ import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryState } fr
 import { Pagination } from "@/components/Pagination";
 import { Search } from "@/components/Search";
 import { SortIndicator } from "@/components/SortIndicator";
+import { ThemeButton } from "@/components/ThemeButton";
 import { statsOptions } from "@/queries/stats";
 
 const formatNumber = (value: number) => {
@@ -57,6 +58,9 @@ export const Stats = () => {
 
   return (
     <div className="mx-auto my-6 max-w-6xl space-y-2 px-4">
+      <div className="absolute top-2 right-2">
+        <ThemeButton />
+      </div>
       <h1 className="mb-4">Electricity Statistics</h1>
 
       <div>
