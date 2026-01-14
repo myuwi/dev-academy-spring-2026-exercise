@@ -33,7 +33,11 @@ export const Search = ({ value: valueProp, onChange }: SearchProps) => {
           value={value}
         />
         {!!value && (
-          <button className="opacity-50 hover:opacity-75 transition-opacity" type="reset">
+          <button
+            className="opacity-50 transition-opacity hover:opacity-75"
+            type="reset"
+            aria-label="Clear Button"
+          >
             <X className="size-4" />
           </button>
         )}
