@@ -57,10 +57,10 @@ If you wish, you may also briefly describe **where and how you used any such too
   - Make `date` and `starttime` `NOT NULL` to ensure the columns are not missing
   - Make `starttime` `UNIQUE` to prevent duplicate data from being inserted
 - [x] Implement Component tests using React Testing Library
-- [ ] Implement E2E tests using Playwright
+- [x] Implement E2E tests using Playwright
 - [x] Pre-commit hooks for lint/tests
 - [ ] CI/CD for lint/tests/docker
-- [ ] Running backend in Docker
+- [x] Running backend in Docker
 - [ ] Running backend in Cloud
 - [ ] i18n
 

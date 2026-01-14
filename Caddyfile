@@ -1,0 +1,14 @@
+{
+  servers {
+    trusted_proxies static private_ranges
+  }
+}
+
+{$BASE_URL} {
+  route {
+    handle_path /api/* {
+      reverse_proxy http://backend:3000
+    }
+    reverse_proxy http://web:80
+  }
+}

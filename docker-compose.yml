@@ -1,18 +1,49 @@
 services:
   db:
-    image: postgres
-    restart: always
+    image: dev-academy-db:latest
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
       POSTGRES_USER: academy
       POSTGRES_PASSWORD: academy
       POSTGRES_DB: electricity
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "academy", "-d", "electricity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: dev-academy-backend:latest
+    restart: unless-stopped
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: apps/backend/Dockerfile
+    environment:
+      - DATABASE_URL=postgres://academy:academy@db:5432/electricity
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    image: dev-academy-web:latest
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    depends_on:
+      - backend
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      - BASE_URL=":80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - web
     ports:
-      - 5432:5432
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8088:8080
+      - 8081:80

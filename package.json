@@ -4,10 +4,11 @@
     "preinstall": "bunx --bun only-allow bun",
     "dev": "bun --filter '*' dev",
     "docker": "docker compose up --build --renew-anon-volumes",
+    "docker:dev": "docker compose -f docker-compose.dev.yml up --build --renew-anon-volumes",
     "lint": "oxlint --type-aware --deny-warnings",
     "test": "bun --filter './apps/*' test",
     "test:e2e": "bun --cwd e2e test",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "workspaces": [
     "apps/*",
