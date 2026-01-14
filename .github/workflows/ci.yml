@@ -10,6 +10,9 @@ jobs:
   test-and-build:
     name: Test and Build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -48,3 +51,19 @@ jobs:
 
       - name: Stop Docker services
         run: docker compose down
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Docker images to GitHub Container Registry
+        run: |
+          docker tag dev-academy-web:latest ghcr.io/${{ github.repository_owner }}/dev-academy-web:latest
+          docker tag dev-academy-backend:latest ghcr.io/${{ github.repository_owner }}/dev-academy-backend:latest
+          docker tag dev-academy-db:latest ghcr.io/${{ github.repository_owner }}/dev-academy-db:latest
+          docker push ghcr.io/${{ github.repository_owner }}/dev-academy-web:latest
+          docker push ghcr.io/${{ github.repository_owner }}/dev-academy-backend:latest
+          docker push ghcr.io/${{ github.repository_owner }}/dev-academy-db:latest

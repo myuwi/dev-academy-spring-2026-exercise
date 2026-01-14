@@ -59,7 +59,7 @@ If you wish, you may also briefly describe **where and how you used any such too
 - [x] Implement Component tests using React Testing Library
 - [x] Implement E2E tests using Playwright
 - [x] Pre-commit hooks for lint/tests
-- [ ] CI/CD for lint/tests/docker
+- [x] CI/CD for lint/tests/docker
 - [x] Running backend in Docker
 - [ ] Running backend in Cloud
 - [x] Dark mode 😎
