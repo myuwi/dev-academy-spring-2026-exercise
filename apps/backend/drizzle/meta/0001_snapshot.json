@@ -63,9 +63,7 @@
         "electricitydata_starttime_unique": {
           "name": "electricitydata_starttime_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "starttime"
-          ]
+          "columns": ["starttime"]
         }
       },
       "policies": {},

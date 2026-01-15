@@ -1,19 +1,20 @@
 {
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "e2e"
+  ],
   "scripts": {
     "preinstall": "bunx --bun only-allow bun",
     "dev": "bun --filter '*' dev",
     "docker": "docker compose up --build --renew-anon-volumes",
     "docker:dev": "docker compose -f docker-compose.dev.yml up --build --renew-anon-volumes",
     "lint": "oxlint --type-aware --deny-warnings",
+    "format": "oxfmt --check",
     "test": "bun --filter './apps/*' test",
     "test:e2e": "bun --cwd e2e test",
     "prepare": "husky || true"
   },
-  "workspaces": [
-    "apps/*",
-    "e2e"
-  ],
   "devDependencies": {
     "husky": "^9.1.7",
     "oxfmt": "^0.24.0",
