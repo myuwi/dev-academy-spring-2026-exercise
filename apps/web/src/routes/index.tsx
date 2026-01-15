@@ -1,38 +1,40 @@
 import { useQuery } from "@tanstack/react-query";
-import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
+import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
+import { zodValidator } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { Pagination } from "@/components/Pagination";
 import { Search } from "@/components/Search";
 import { SortIndicator } from "@/components/SortIndicator";
-import { ThemeButton } from "@/components/ThemeButton";
 import { statsOptions } from "@/queries/stats";
+import { formatNumber } from "@/utils";
 
-const formatNumber = (value: number) => {
-  return value.toFixed(2);
-};
+const defaultValues = {
+  page: 1,
+  pageSize: 15,
+  sortBy: "date",
+  sortDirection: "desc",
+  q: "",
+} as const;
 
-export const Stats = () => {
-  const [page, setPage] = useQueryState(
-    "page",
-    parseAsInteger.withDefault(1).withOptions({ history: "push" }),
-  );
-  const [pageSize, setPageSize] = useQueryState(
-    "pageSize",
-    parseAsInteger.withDefault(15).withOptions({ history: "push", clearOnDefault: false }),
-  );
-  const [sortBy, setSortBy] = useQueryState(
-    "sortBy",
-    parseAsString.withDefault("date").withOptions({ history: "push", clearOnDefault: false }),
-  );
-  const [sortDirection, setSortDirection] = useQueryState(
-    "sortDirection",
-    parseAsStringLiteral(["asc", "desc"])
-      .withDefault("desc")
-      .withOptions({ history: "push", clearOnDefault: false }),
-  );
-  const [query, setQuery] = useQueryState(
-    "q",
-    parseAsString.withDefault("").withOptions({ history: "push" }),
-  );
+const statsSearchSchema = z.object({
+  page: z.number().default(defaultValues.page),
+  pageSize: z.number().default(defaultValues.pageSize),
+  sortBy: z.string().default(defaultValues.sortBy),
+  sortDirection: z.enum(["asc", "desc"]).default(defaultValues.sortDirection),
+  q: z.string().default(defaultValues.q),
+});
+
+export const Route = createFileRoute("/")({
+  component: RouteComponent,
+  validateSearch: zodValidator(statsSearchSchema),
+  search: {
+    middlewares: [stripSearchParams(defaultValues)],
+  },
+});
+
+function RouteComponent() {
+  const { page, pageSize, sortBy, sortDirection, q: query } = Route.useSearch();
+  const navigate = Route.useNavigate();
 
   const { data: stats } = useQuery({
     ...statsOptions({
@@ -46,21 +48,36 @@ export const Stats = () => {
   });
 
   const handleSort = (column: string) => {
-    void setSortBy(column);
-    void setSortDirection(sortBy === column && sortDirection === "desc" ? "asc" : "desc");
-    void setPage(1);
+    void navigate({
+      search: (prev) => ({
+        ...prev,
+        sortBy: column,
+        sortDirection: sortBy === column && sortDirection === "desc" ? "asc" : "desc",
+        page: 1,
+      }),
+    });
   };
 
   const handleSearch = (query: string) => {
-    void setQuery(query);
-    void setPage(1);
+    void navigate({
+      search: (prev) => ({ ...prev, q: query, page: 1 }),
+    });
+  };
+
+  const handlePageChange = (page: number) => {
+    void navigate({
+      search: (prev) => ({ ...prev, page }),
+    });
+  };
+
+  const handlePageSizeChange = (pageSize: number) => {
+    void navigate({
+      search: (prev) => ({ ...prev, pageSize }),
+    });
   };
 
   return (
     <div className="mx-auto my-6 max-w-6xl space-y-2 px-4">
-      <div className="absolute top-2 right-2">
-        <ThemeButton />
-      </div>
       <h1 className="mb-4">Electricity Statistics</h1>
 
       <div>
@@ -128,11 +145,11 @@ export const Stats = () => {
       </div>
       <Pagination
         page={page}
-        onPageChange={setPage}
+        onPageChange={handlePageChange}
         pageSize={pageSize}
-        onPageSizeChange={setPageSize}
+        onPageSizeChange={handlePageSizeChange}
         total={stats?.count ?? 0}
       />
     </div>
   );
-};
+}
