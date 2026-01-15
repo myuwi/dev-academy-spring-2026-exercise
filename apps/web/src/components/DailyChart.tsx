@@ -36,7 +36,7 @@ export const DailyChart = ({ data }: DailyChartProps) => {
         yAxisId="left"
         type="monotone"
         stroke="var(--color-chart-1)"
-        strokeWidth={3}
+        strokeWidth={2}
         dot={false}
         dataKey="productionAmount"
         name="Production"
@@ -46,7 +46,7 @@ export const DailyChart = ({ data }: DailyChartProps) => {
         yAxisId="left"
         type="monotone"
         stroke="var(--color-chart-2)"
-        strokeWidth={3}
+        strokeWidth={2}
         dot={false}
         dataKey="consumptionAmount"
         name="Consumption"
@@ -56,7 +56,7 @@ export const DailyChart = ({ data }: DailyChartProps) => {
         yAxisId="right"
         type="monotone"
         stroke="var(--color-chart-3)"
-        strokeWidth={3}
+        strokeWidth={2}
         dot={false}
         dataKey="hourlyPrice"
         name="Price"
