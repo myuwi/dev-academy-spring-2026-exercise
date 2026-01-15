@@ -2,35 +2,52 @@
 
 :root {
   --background: var(--color-white);
-  --primary: var(--color-zinc-700);
+  --foreground: var(--color-zinc-700);
+
+  --primary: var(--color-blue-500);
   --secondary: var(--color-zinc-100);
   --subtle: var(--color-zinc-600);
   --border: --alpha(var(--color-black) / 10%);
   --ring: --alpha(var(--color-black) / 20%);
+
+  --chart-1: var(--primary);
+  --chart-2: var(--foreground);
+  --chart-3: var(--color-orange-400);
 }
 
 .dark {
   --background: var(--color-zinc-900);
-  --primary: var(--color-zinc-200);
+  --foreground: var(--color-zinc-200);
+
+  --primary: var(--color-blue-500);
   --secondary: var(--color-zinc-800);
   --subtle: var(--color-zinc-300);
   --border: --alpha(var(--color-white) / 10%);
   --ring: --alpha(var(--color-white) / 20%);
+
+  --chart-1: var(--primary);
+  --chart-2: var(--foreground);
+  --chart-3: var(--color-orange-400);
 }
 
 @theme {
   --font-sans: "Rubik", sans-serif;
 
   --color-background: var(--background);
+  --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-subtle: var(--subtle);
   --color-border: var(--border);
   --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
 }
 
 body {
-  @apply bg-background text-primary;
+  @apply bg-background text-foreground;
 }
 
 h1 {

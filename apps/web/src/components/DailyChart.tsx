@@ -3,8 +3,8 @@ import type { HourlyStat } from "@/queries/stats";
 import { formatTime } from "@/utils";
 import { CustomTooltip } from "./CustomTooltip";
 
-const renderLegendText = (value: React.ReactNode) => {
-  return <span className="ml-0.5 text-sm text-primary select-none">{value}</span>;
+const LegendText = (value: React.ReactNode) => {
+  return <span className="ml-0.5 text-sm text-foreground">{value}</span>;
 };
 
 interface DailyChartProps {
@@ -15,20 +15,27 @@ interface DailyChartProps {
 // TODO: Fix x axis at 0-23 hours
 
 export const DailyChart = ({ data }: DailyChartProps) => {
-  const minPrice = data.reduce<number>((min, d) => {
+  const formattedData = data.map((d) => ({
+    ...d,
+    startTime: formatTime(d.startTime),
+  }));
+
+  const minDomainPrice = data.reduce<number>((min, d) => {
     if (d.hourlyPrice && d.hourlyPrice < min) {
       return d.hourlyPrice;
     }
     return min;
   }, 0);
 
+  const minDomain = minDomainPrice;
+
   return (
-    <LineChart className="aspect-[1.8] w-full" responsive data={data}>
+    <LineChart className="aspect-[1.8] w-full" responsive data={formattedData}>
       <CartesianGrid yAxisId="left" vertical={false} strokeDasharray="3" stroke="#ccc" />
       <Line
         yAxisId="left"
         type="monotone"
-        stroke="var(--color-blue-500)"
+        stroke="var(--color-chart-1)"
         strokeWidth={3}
         dot={false}
         dataKey="productionAmount"
@@ -38,7 +45,7 @@ export const DailyChart = ({ data }: DailyChartProps) => {
       <Line
         yAxisId="left"
         type="monotone"
-        stroke="var(--color-primary)"
+        stroke="var(--color-chart-2)"
         strokeWidth={3}
         dot={false}
         dataKey="consumptionAmount"
@@ -48,7 +55,7 @@ export const DailyChart = ({ data }: DailyChartProps) => {
       <Line
         yAxisId="right"
         type="monotone"
-        stroke="var(--color-orange-400)"
+        stroke="var(--color-chart-3)"
         strokeWidth={3}
         dot={false}
         dataKey="hourlyPrice"
@@ -56,14 +63,7 @@ export const DailyChart = ({ data }: DailyChartProps) => {
         unit=" c/kWh"
       />
 
-      <XAxis
-        dataKey="startTime"
-        axisLine={false}
-        tickLine={false}
-        tickMargin={0}
-        tickFormatter={formatTime}
-        minTickGap={10}
-      />
+      <XAxis type="category" dataKey="startTime" axisLine={false} tickLine={false} tickMargin={0} />
       <YAxis
         type="number"
         yAxisId="left"
@@ -71,7 +71,7 @@ export const DailyChart = ({ data }: DailyChartProps) => {
         axisLine={false}
         tickLine={false}
         tickCount={6}
-        domain={[minPrice, "auto"]}
+        domain={[minDomain, "auto"]}
         unit=" MWh"
       />
       <YAxis
@@ -82,7 +82,7 @@ export const DailyChart = ({ data }: DailyChartProps) => {
         axisLine={false}
         tickLine={false}
         tickCount={6}
-        domain={[minPrice, "auto"]}
+        domain={[minDomain, "auto"]}
         unit=" c/kWh"
       />
       <Legend
@@ -91,7 +91,7 @@ export const DailyChart = ({ data }: DailyChartProps) => {
         align="right"
         verticalAlign="top"
         iconType="square"
-        formatter={renderLegendText}
+        formatter={LegendText}
       />
       <Tooltip isAnimationActive={false} content={CustomTooltip} />
     </LineChart>

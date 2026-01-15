@@ -1,5 +1,5 @@
 import type { Tooltip } from "recharts";
-import { formatNumber, formatTime } from "@/utils";
+import { formatNumber } from "@/utils";
 
 export const CustomTooltip: React.ComponentProps<typeof Tooltip>["content"] = ({
   active,
@@ -9,7 +9,7 @@ export const CustomTooltip: React.ComponentProps<typeof Tooltip>["content"] = ({
   if (active && payload && payload.length) {
     return (
       <div className="flex flex-col rounded-lg border border-border bg-background py-2 pr-3 pl-2 text-sm">
-        <p className="text-foreground font-medium">{formatTime(label as string)}</p>
+        <p className="text-foreground font-medium">{label as string}</p>
         {payload.map((item) => {
           return (
             <div key={item.dataKey} className="flex items-center justify-between gap-4">
