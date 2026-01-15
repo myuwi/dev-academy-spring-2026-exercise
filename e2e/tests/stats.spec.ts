@@ -25,9 +25,7 @@ test.describe("Stats page", () => {
       }
     });
 
-    test("user clears the search and gets back the full list", async ({
-      page,
-    }) => {
+    test("user clears the search and gets back the full list", async ({ page }) => {
       await page.goto("/?q=2023-01-24");
 
       await expect(page.locator("tbody > tr")).toHaveCount(1);
@@ -35,22 +33,10 @@ test.describe("Stats page", () => {
       await page.getByRole("button", { name: "Clear Search" }).click();
 
       await expect(page).toHaveURL((url) => !url.searchParams.has("q"));
-      await expect(page.locator("tbody > tr")).toHaveCount(15);
+      await expect(page.locator("tbody > tr")).toHaveCount(10);
     });
 
-    test("user types a query matching no rows and sees no data", async ({
-      page,
-    }) => {
-      await page.goto("/");
-      await page.getByRole("search", { name: "Search bar" }).fill("foo");
-      await page.getByRole("search", { name: "Search bar" }).press("Enter");
-
-      await expect(page.locator("tbody > tr")).toHaveCount(0);
-    });
-
-    test("user types a query matching no rows and sees no results", async ({
-      page,
-    }) => {
+    test("user types a query matching no rows and sees no results", async ({ page }) => {
       await page.goto("/");
       await page.getByRole("search", { name: "Search bar" }).fill("foo");
       await page.getByRole("search", { name: "Search bar" }).press("Enter");
@@ -99,17 +85,13 @@ test.describe("Stats page", () => {
       const totalProductionHeader = page.getByText(/Total Production/);
       await totalProductionHeader.click();
 
-      await expect(
-        page.getByRole("textbox", { name: "Current Page Number" }),
-      ).toHaveValue("1");
+      await expect(page.getByRole("textbox", { name: "Current Page Number" })).toHaveValue("1");
       await expect(totalProductionHeader.getByLabel("Descending")).toBeVisible();
     });
   });
 
   test.describe("Pagination", () => {
-    test("user clicks on 'Next Page' three times; arrives on page 4", async ({
-      page,
-    }) => {
+    test("user clicks on 'Next Page' three times; arrives on page 4", async ({ page }) => {
       await page.goto("/");
 
       const nextPageButton = page.getByRole("button", { name: "Next Page" });
@@ -119,9 +101,7 @@ test.describe("Stats page", () => {
 
       await expect(page).toHaveURL(/page=4/);
 
-      await expect(
-        page.getByRole("textbox", { name: "Current Page Number" }),
-      ).toHaveValue("4");
+      await expect(page.getByRole("textbox", { name: "Current Page Number" })).toHaveValue("4");
     });
 
     test("user switches from 15 to 50 rows per page, and table row count changes to reflect selection", async ({
@@ -149,9 +129,7 @@ test.describe("Stats page", () => {
 
       await expect(page).toHaveURL((url) => !url.searchParams.has("page"));
 
-      await expect(
-        page.getByRole("textbox", { name: "Current Page Number" }),
-      ).toHaveValue("1");
+      await expect(page.getByRole("textbox", { name: "Current Page Number" })).toHaveValue("1");
 
       await expect(table.locator("tbody > tr")).toHaveCount(50);
     });

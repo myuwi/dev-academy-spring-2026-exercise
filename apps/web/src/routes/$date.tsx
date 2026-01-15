@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { DailyChart } from "@/components/DailyChart";
 import { InfoCard } from "@/components/InfoCard";
@@ -6,13 +6,17 @@ import { dailyStatsOptions } from "@/queries/stats";
 
 export const Route = createFileRoute("/$date")({
   component: RouteComponent,
+  errorComponent: () => "404 Not Found",
+  loader: ({ context: { queryClient }, params: { date } }) => {
+    return queryClient.ensureQueryData(dailyStatsOptions(date));
+  },
 });
 
 function RouteComponent() {
   const { date } = Route.useParams();
-  const { data: stats } = useQuery(dailyStatsOptions(date));
+  const { data: stats } = useSuspenseQuery(dailyStatsOptions(date));
 
-  const totals = stats?.data.reduce(
+  const totals = stats.data.reduce(
     (acc, hour) => {
       return {
         consumptionAmount: acc.consumptionAmount + (hour.consumptionAmount ?? 0)!,
@@ -22,11 +26,11 @@ function RouteComponent() {
     { consumptionAmount: 0, productionAmount: 0 },
   );
 
-  const prices = stats?.data.map((row) => row.hourlyPrice).filter((row) => row !== null);
-  const averagePrice = prices?.length && prices.reduce((acc, p) => acc + p) / prices.length;
+  const prices = stats.data.map((row) => row.hourlyPrice).filter((row) => row !== null);
+  const averagePrice = prices.length && prices.reduce((acc, p) => acc + p) / prices.length;
 
   return (
-    <>
+    <div className="enter">
       <div className="flex flex-row justify-between gap-4 max-lg:flex-col">
         <div className="mb-0">
           <h1>Daily Report</h1>
@@ -34,8 +38,8 @@ function RouteComponent() {
         </div>
 
         <div className="flex flex-row justify-end gap-4">
-          <InfoCard label="Total Consumption" value={totals?.consumptionAmount} unit="MWh" />
-          <InfoCard label="Total Production" value={totals?.productionAmount} unit="MWh" />
+          <InfoCard label="Total Consumption" value={totals.consumptionAmount} unit="MWh" />
+          <InfoCard label="Total Production" value={totals.productionAmount} unit="MWh" />
           <InfoCard label="Average Price" value={averagePrice} unit="c/kWh" />
         </div>
       </div>
@@ -43,6 +47,6 @@ function RouteComponent() {
       <div className="mt-8 rounded-lg border border-border p-4 text-sm">
         {stats && <DailyChart data={stats.data} />}
       </div>
-    </>
+    </div>
   );
 }

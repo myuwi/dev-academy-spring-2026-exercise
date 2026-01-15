@@ -1,17 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, stripSearchParams } from "@tanstack/react-router";
+import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
-import { ChevronRight } from "lucide-react";
 import { z } from "zod";
+import { DataTable } from "@/components/DataTable";
 import { Pagination } from "@/components/Pagination";
 import { Search } from "@/components/Search";
-import { SortIndicator } from "@/components/SortIndicator";
 import { statsOptions } from "@/queries/stats";
-import { formatNumber } from "@/utils";
 
 const defaultValues = {
   page: 1,
-  pageSize: 15,
+  pageSize: 10,
   sortBy: "date",
   sortDirection: "desc",
   q: "",
@@ -48,6 +46,8 @@ function RouteComponent() {
     placeholderData: (prev) => prev,
   });
 
+  if (!stats) return null;
+
   const handleSort = (column: string) => {
     void navigate({
       search: (prev) => ({
@@ -78,7 +78,7 @@ function RouteComponent() {
   };
 
   return (
-    <>
+    <div className="enter space-y-2">
       <h1 className="mb-4">Electricity Statistics</h1>
 
       <div>
@@ -86,74 +86,14 @@ function RouteComponent() {
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-border">
-        <table className="ui-table" aria-label="Data Table">
-          <thead>
-            <tr>
-              <th>
-                <button className="ui-button -ml-2" onClick={() => handleSort("date")}>
-                  Date
-                  <SortIndicator active={sortBy === "date"} direction={sortDirection} />
-                </button>
-              </th>
-              <th>
-                <button className="ui-button -ml-2" onClick={() => handleSort("totalProduction")}>
-                  Total Production (MWh)
-                  <SortIndicator active={sortBy === "totalProduction"} direction={sortDirection} />
-                </button>
-              </th>
-              <th>
-                <button className="ui-button -ml-2" onClick={() => handleSort("totalConsumption")}>
-                  Total Consumption (MWh)
-                  <SortIndicator active={sortBy === "totalConsumption"} direction={sortDirection} />
-                </button>
-              </th>
-              <th>
-                <button className="ui-button -ml-2" onClick={() => handleSort("averagePrice")}>
-                  Average Price (c/kWh)
-                  <SortIndicator active={sortBy === "averagePrice"} direction={sortDirection} />
-                </button>
-              </th>
-              <th>
-                <button
-                  className="ui-button -ml-2"
-                  onClick={() => handleSort("longestNegativeHours")}
-                >
-                  Longest Negative Price Streak (hrs)
-                  <SortIndicator
-                    active={sortBy === "longestNegativeHours"}
-                    direction={sortDirection}
-                  />
-                </button>
-              </th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {stats?.data.map(
-              ({ date, totalProduction, totalConsumption, averagePrice, longestNegativeHours }) => {
-                return (
-                  <tr key={date}>
-                    <td>{date}</td>
-                    <td>{totalProduction ? formatNumber(totalProduction) : "No data"}</td>
-                    <td>{totalConsumption ? formatNumber(totalConsumption) : "No data"}</td>
-                    <td>{averagePrice ? formatNumber(averagePrice) : "No data"}</td>
-                    <td>{longestNegativeHours}</td>
-                    <td>
-                      <Link
-                        className="ui-button -ml-2 size-9 ring ring-border"
-                        to="/$date"
-                        params={{ date }}
-                      >
-                        <ChevronRight />
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              },
-            )}
-          </tbody>
-        </table>
+        <DataTable
+          data={stats?.data ?? []}
+          sortBy={sortBy}
+          sortDirection={sortDirection}
+          onSort={handleSort}
+        />
       </div>
+
       <Pagination
         page={page}
         onPageChange={handlePageChange}
@@ -161,6 +101,6 @@ function RouteComponent() {
         onPageSizeChange={handlePageSizeChange}
         total={stats?.count ?? 0}
       />
-    </>
+    </div>
   );
 }
