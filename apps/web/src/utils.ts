@@ -1,3 +1,11 @@
-export const formatNumber = (value: number) => {
-  return value.toFixed(2);
+export const formatNumber = (value: number, decimals: number = 2) => {
+  return value.toFixed(decimals);
+};
+
+export const formatTime = (value: string) => {
+  const date = new Date(value);
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  return `${hours}:${minutes}`;
 };

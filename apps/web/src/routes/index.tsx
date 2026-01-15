@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
+import { createFileRoute, Link, stripSearchParams } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
+import { ChevronRight } from "lucide-react";
 import { z } from "zod";
 import { Pagination } from "@/components/Pagination";
 import { Search } from "@/components/Search";
@@ -77,7 +78,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="mx-auto my-6 max-w-6xl space-y-2 px-4">
+    <>
       <h1 className="mb-4">Electricity Statistics</h1>
 
       <div>
@@ -124,6 +125,7 @@ function RouteComponent() {
                   />
                 </button>
               </th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -136,6 +138,15 @@ function RouteComponent() {
                     <td>{totalConsumption ? formatNumber(totalConsumption) : "No data"}</td>
                     <td>{averagePrice ? formatNumber(averagePrice) : "No data"}</td>
                     <td>{longestNegativeHours}</td>
+                    <td>
+                      <Link
+                        className="ui-button -ml-2 size-9 ring ring-border"
+                        to="/$date"
+                        params={{ date }}
+                      >
+                        <ChevronRight />
+                      </Link>
+                    </td>
                   </tr>
                 );
               },
@@ -150,6 +161,6 @@ function RouteComponent() {
         onPageSizeChange={handlePageSizeChange}
         total={stats?.count ?? 0}
       />
-    </div>
+    </>
   );
 }

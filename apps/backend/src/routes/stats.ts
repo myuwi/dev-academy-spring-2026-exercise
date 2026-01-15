@@ -1,5 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
-import { and, avg, count, countDistinct, eq, ilike, lt, max, sql, sum } from "drizzle-orm";
+import { and, asc, avg, count, countDistinct, eq, ilike, lt, max, sql, sum } from "drizzle-orm";
 import { Hono } from "hono";
 import * as z from "zod";
 import { db } from "../db";
@@ -95,6 +95,27 @@ stats.get("/", zValidator("query", QuerySchema), async (c) => {
   return c.json({
     data,
     count: totalCount,
+  });
+});
+
+stats.get("/:date", zValidator("param", z.object({ date: z.iso.date() })), async (c) => {
+  const { date } = c.req.valid("param");
+
+  const data = await db
+    .select({
+      startTime: electricityData.startTime,
+      productionAmount: sql<number>`cast(${electricityData.productionAmount} as float)`,
+      // Convert from kWh to MWh
+      consumptionAmount: sql<number>`cast(${electricityData.consumptionAmount} / 1000 as float)`,
+      hourlyPrice: sql<number>`cast(${electricityData.hourlyPrice} as float)`,
+    })
+    .from(electricityData)
+    .where(eq(sql`${electricityData.date}::text`, date))
+    .orderBy((stats) => asc(stats.startTime));
+
+  return c.json({
+    date,
+    data,
   });
 });
 

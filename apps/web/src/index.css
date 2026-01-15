@@ -34,51 +34,53 @@ body {
 }
 
 h1 {
-  @apply text-2xl;
+  @apply text-3xl;
 }
 
 svg {
   @apply shrink-0;
 }
 
-.ui-button {
-  @apply flex items-center gap-1 rounded-lg p-2 text-left transition-colors not-disabled:hover:bg-secondary disabled:opacity-50 [&_svg:not([class*='size-'])]:size-5;
-}
-
-.ui-table {
-  @apply w-full text-sm leading-5;
-
-  th {
-    @apply min-h-10 bg-secondary/25 px-4 py-1 text-left align-middle font-medium text-subtle;
+@layer components {
+  .ui-button {
+    @apply flex items-center gap-1 rounded-lg p-2 text-left transition-colors not-disabled:hover:bg-secondary disabled:opacity-50 [&_svg:not([class*='size-'])]:size-5;
   }
 
-  td {
-    @apply border-t border-t-border px-4 py-3 align-middle;
-  }
-}
+  .ui-table {
+    @apply w-full text-sm leading-5;
 
-.ui-input {
-  @apply inline-flex h-9 items-center gap-2 rounded-lg border border-border px-2 py-1.5 text-sm invalid:border-red-500/30 invalid:bg-red-500/10 aria-invalid:border-red-500/30 aria-invalid:bg-red-500/10;
+    thead tr th {
+      @apply min-h-10 bg-secondary/40 px-2 py-1 text-left align-middle font-medium text-subtle first:pl-4 last:pr-4;
+    }
 
-  &:where(input) {
-    @apply inline-flex;
-  }
-
-  :where(input) {
-    @apply inline-flex h-full w-full appearance-none border-0 bg-transparent;
-
-    &:focus,
-    &:focus-within {
-      outline: none;
+    tbody tr td {
+      @apply border-t border-t-border bg-background p-2 align-middle first:pl-4 last:pr-4;
     }
   }
 
-  &:focus-visible,
-  &:focus-within {
-    outline: auto;
-  }
-}
+  .ui-input {
+    @apply inline-flex h-9 items-center gap-2 rounded-lg border border-border px-2 py-1.5 text-sm invalid:border-red-500/30 invalid:bg-red-500/10 aria-invalid:border-red-500/30 aria-invalid:bg-red-500/10;
 
-.ui-select {
-  @apply h-9 rounded-lg border border-border px-2 py-1.5 text-sm;
+    &:where(input) {
+      @apply inline-flex;
+    }
+
+    :where(input) {
+      @apply inline-flex h-full w-full appearance-none border-0 bg-transparent;
+
+      &:focus,
+      &:focus-within {
+        outline: none;
+      }
+    }
+
+    &:focus-visible,
+    &:focus-within {
+      outline: auto;
+    }
+  }
+
+  .ui-select {
+    @apply h-9 rounded-lg border border-border px-2 py-1.5 text-sm;
+  }
 }

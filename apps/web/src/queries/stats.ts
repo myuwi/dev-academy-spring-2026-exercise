@@ -1,12 +1,19 @@
 import { queryOptions } from "@tanstack/react-query";
 import ky from "ky";
 
-interface Stat {
+export interface DailyStat {
   date: string;
   totalProduction: number | null;
   totalConsumption: number | null;
   averagePrice: number | null;
   longestNegativeHours: number;
+}
+
+export interface HourlyStat {
+  startTime: string;
+  productionAmount: number | null;
+  consumptionAmount: number | null;
+  hourlyPrice: number | null;
 }
 
 type StatsOptionsParams = {
@@ -25,5 +32,15 @@ export const statsOptions = (params?: StatsOptionsParams) =>
         .get("/api/stats", {
           searchParams: params,
         })
-        .json<{ data: Stat[]; count: number }>(),
+        .json<{ data: DailyStat[]; count: number }>(),
+  });
+
+export const dailyStatsOptions = (date: string) =>
+  queryOptions({
+    queryKey: ["stats", date],
+    queryFn: () =>
+      ky.get(`/api/stats/${date}`).json<{
+        date: string;
+        data: HourlyStat[];
+      }>(),
   });

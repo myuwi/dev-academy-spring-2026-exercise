@@ -41,13 +41,13 @@ If you wish, you may also briefly describe **where and how you used any such too
 
 ## Other additional features
 
-- [ ] Single day view
-  - [ ] Total electricity consumption per day
-  - [ ] Total electricity production per day
-  - [ ] Average electricity price per day
+- [x] Single day view
+  - [x] Total electricity consumption per day
+  - [x] Total electricity production per day
+  - [x] Average electricity price per day
   - [ ] Hour with most electricity consumption compared to production
   - [ ] Cheapest electricity hours for the day
-- [ ] Graph visualisations
+- [x] Graph visualisations
 
 ## Surprise us with
 
