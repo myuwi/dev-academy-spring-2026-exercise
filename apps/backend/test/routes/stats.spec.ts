@@ -9,7 +9,7 @@ describe("GET /stats", async () => {
     const res = await app.request(url);
 
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ data: [], count: 0 });
+    expect(await res.json()).toEqual({ data: [], total: 0 });
   });
 
   it("should ignore unknown query parameters", async () => {
@@ -35,7 +35,7 @@ describe("GET /stats", async () => {
 
     const json = (await res.json()) as any;
     expect(json.data).toBeArrayOfSize(7);
-    expect(json.count).toBe(7);
+    expect(json.total).toBe(7);
   });
 
   it("should calculate longestNegativeHours correctly", async () => {
@@ -136,7 +136,7 @@ describe("GET /stats", async () => {
 
     const json = (await res.json()) as any;
     expect(json.data).toBeArrayOfSize(2);
-    expect(json.count).toBe(7);
+    expect(json.total).toBe(7);
 
     expect(json.data[0].date).toBe("2026-01-02");
     expect(json.data[1].date).toBe("2026-01-03");
@@ -151,7 +151,7 @@ describe("GET /stats", async () => {
 
     const json = (await res.json()) as any;
     expect(json.data).toBeArrayOfSize(4);
-    expect(json.count).toBe(4);
+    expect(json.total).toBe(4);
 
     expect(json.data[0].date).toBe("2026-01-01");
     expect(json.data[1].date).toBe("2026-01-02");
@@ -168,6 +168,6 @@ describe("GET /stats", async () => {
 
     const json = (await res.json()) as any;
     expect(json.data).toBeArrayOfSize(0);
-    expect(json.count).toBe(0);
+    expect(json.total).toBe(0);
   });
 });

@@ -47,7 +47,7 @@ export const Pagination = ({
   return (
     <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-sm">
       <div>
-        Showing {(page - 1) * pageSize + 1}-{page * pageSize} of {total}
+        Showing {(page - 1) * pageSize + 1}-{Math.min(page * pageSize, total)} of {total}
       </div>
 
       <div className="flex gap-2">

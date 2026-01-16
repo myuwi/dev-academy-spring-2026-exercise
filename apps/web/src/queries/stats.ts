@@ -22,6 +22,7 @@ type StatsOptionsParams = {
   search?: string;
   offset?: number;
   limit?: number;
+  filters?: string;
 };
 
 export const statsOptions = (params?: StatsOptionsParams) =>
@@ -32,7 +33,7 @@ export const statsOptions = (params?: StatsOptionsParams) =>
         .get("/api/stats", {
           searchParams: params,
         })
-        .json<{ data: DailyStat[]; count: number }>(),
+        .json<{ data: DailyStat[]; total: number }>(),
   });
 
 export const dailyStatsOptions = (date: string) =>

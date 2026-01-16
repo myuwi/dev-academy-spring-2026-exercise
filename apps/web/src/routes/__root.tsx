@@ -14,7 +14,7 @@ function RootComponent() {
     <div className="enter">
       <nav className="sticky z-50 mx-auto flex h-14 max-w-6xl items-center justify-between bg-background px-2">
         <div>
-          <Link className="ui-button" to="/">
+          <Link className="ui-button text-base" to="/">
             <Zap className="fill-current text-blue-500" /> Electricity
           </Link>
         </div>

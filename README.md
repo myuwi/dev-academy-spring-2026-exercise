@@ -37,7 +37,7 @@ If you wish, you may also briefly describe **where and how you used any such too
 - [x] Pagination
 - [x] Ordering per column
 - [x] Searching
-- [ ] Filtering
+- [x] Filtering
 
 ## Other additional features
 

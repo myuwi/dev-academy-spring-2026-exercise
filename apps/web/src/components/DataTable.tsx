@@ -61,11 +61,7 @@ export const DataTable = ({ data, sortBy, sortDirection, onSort }: DataTableProp
                 <td>{averagePrice ? formatNumber(averagePrice) : "No data"}</td>
                 <td>{longestNegativeHours}</td>
                 <td>
-                  <Link
-                    className="ui-button -ml-2 size-9 ring ring-border"
-                    to="/$date"
-                    params={{ date }}
-                  >
+                  <Link className="ui-button size-9 ring ring-border" to="/$date" params={{ date }}>
                     <ChevronRight />
                   </Link>
                 </td>

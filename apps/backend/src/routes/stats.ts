@@ -1,13 +1,23 @@
 import { zValidator } from "@hono/zod-validator";
-import { and, asc, avg, count, countDistinct, eq, ilike, lt, max, sql, sum } from "drizzle-orm";
+import { and, asc, avg, count, eq, gte, ilike, lt, lte, max, SQL, sql, sum } from "drizzle-orm";
 import { Hono } from "hono";
 import * as z from "zod";
 import { db } from "../db";
 import { electricityData } from "../db/schema";
 import { coalesce } from "../db/utils";
 
-// drizzle's mapWith method drops null from nullable columns, so use a helper to keep it
-const NumberNullable = (c: unknown): number | null => Number(c);
+const FiltersSchema = z.object({
+  startDate: z.iso.date().optional(),
+  endDate: z.iso.date().optional(),
+  minProduction: z.coerce.number().optional(),
+  maxProduction: z.coerce.number().optional(),
+  minConsumption: z.coerce.number().optional(),
+  maxConsumption: z.coerce.number().optional(),
+  minAveragePrice: z.coerce.number().optional(),
+  maxAveragePrice: z.coerce.number().optional(),
+  minLongestNegativeHours: z.coerce.number().optional(),
+  maxLongestNegativeHours: z.coerce.number().optional(),
+});
 
 const QuerySchema = z.object({
   sortBy: z
@@ -17,6 +27,7 @@ const QuerySchema = z.object({
   search: z.string().optional(),
   limit: z.coerce.number().min(1).max(500).optional(),
   offset: z.coerce.number().min(0).optional(),
+  filters: z.preprocess((val: string) => JSON.parse(val), FiltersSchema).optional(),
 });
 
 const stats = new Hono();
@@ -28,73 +39,103 @@ stats.get("/", zValidator("query", QuerySchema), async (c) => {
     sortBy = "date",
     sortDirection = "asc",
     search = "",
+    filters = {},
   } = c.req.valid("query");
 
-  const whereClause = search ? ilike(sql`${electricityData.date}::text`, `%${search}%`) : undefined;
-
-  const { totalCount } = (
-    await db
-      .select({ totalCount: countDistinct(electricityData.date) })
-      .from(electricityData)
-      .where(whereClause)
-  )[0];
-
-  const negativeStreaks = db
+  // Iterate over the consecutive negative price hour groupings of each day,
+  // assigning a "negative since" value for each negative price hour
+  const negativeSince = db
     .select({
       date: electricityData.date,
-      startHour: sql<number>`
+      negativeSince: sql<number>`
         extract(hour from ${electricityData.startTime}) - row_number() over (
           partition by ${electricityData.date}
           order by ${electricityData.startTime}
         ) + 1
-      `.as("streak_start_hour"),
+      `.as("negative_since"),
     })
     .from(electricityData)
     .where(lt(electricityData.hourlyPrice, "0"))
-    .as("negative_streaks");
+    .orderBy(electricityData.startTime)
+    .as("negative_since");
 
-  const negativeStreakLengths = db
+  // Calculate the length of each negative price streak by counting the number
+  // of hours that have the same hour as their "negative since" hour
+  const negativeStreaks = db
     .select({
-      date: negativeStreaks.date,
-      startHour: negativeStreaks.startHour,
+      date: negativeSince.date,
+      negativeSince: negativeSince.negativeSince,
       length: count().as("streak_length"),
     })
-    .from(negativeStreaks)
-    .groupBy(negativeStreaks.date, negativeStreaks.startHour)
-    .as("negative_streak_lengths");
+    .from(negativeSince)
+    .groupBy(negativeSince.date, negativeSince.negativeSince)
+    .as("negative_streaks");
 
-  const data = await db
+  // Calculate daily aggregates
+  const aggregates = db
     .select({
       date: electricityData.date,
-      totalProduction: sum(electricityData.productionAmount).mapWith(NumberNullable),
+      totalProduction: sum(electricityData.productionAmount).as("tp"),
       // Convert from kWh to MWh
-      totalConsumption: sql`${sum(electricityData.consumptionAmount)} / 1000`.mapWith(
-        NumberNullable,
-      ),
-      averagePrice: avg(electricityData.hourlyPrice).mapWith(NumberNullable),
-      longestNegativeHours: coalesce(max(negativeStreakLengths.length), "0").mapWith(Number),
+      totalConsumption: sql`${sum(electricityData.consumptionAmount)} / 1000`.as("tc"),
+      averagePrice: avg(electricityData.hourlyPrice).as("ap"),
+      longestNegativeHours: coalesce(max(negativeStreaks.length), "0").as("lnh"),
     })
     .from(electricityData)
-    .where(whereClause)
     .leftJoin(
-      negativeStreakLengths,
+      negativeStreaks,
       and(
-        eq(electricityData.date, negativeStreakLengths.date),
-        eq(sql`extract(hour from ${electricityData.startTime})`, negativeStreakLengths.startHour),
+        eq(electricityData.date, negativeStreaks.date),
+        eq(sql`extract(hour from ${electricityData.startTime})`, negativeStreaks.negativeSince),
       ),
     )
     .groupBy(electricityData.date)
+    .as("aggregates");
+
+  // Compose the final columns and apply filters
+  const query = db
+    .select({
+      date: aggregates.date,
+      totalProduction: sql<number | null>`cast(${aggregates.totalProduction} as float)`.as("tp"),
+      totalConsumption: sql<number | null>`cast(${aggregates.totalConsumption} as float)`.as("tc"),
+      averagePrice: sql<number | null>`cast(${aggregates.averagePrice} as float)`.as("ap"),
+      longestNegativeHours: sql<number>`cast(${aggregates.longestNegativeHours} as int)`.as("lnh"),
+    })
+    .from(aggregates)
+    .where((stats) => {
+      let clauses: SQL[] = [];
+
+      // This is kind of cursed but it works :)
+      if (search) clauses.push(ilike(sql`${stats.date}::text`, `%${search}%`));
+      if (filters.startDate) clauses.push(gte(sql`${stats.date}::text`, filters.startDate));
+      if (filters.endDate) clauses.push(lte(sql`${stats.date}::text`, filters.endDate));
+      if (filters.minProduction) clauses.push(gte(stats.totalProduction, filters.minProduction));
+      if (filters.maxProduction) clauses.push(lte(stats.totalProduction, filters.maxProduction));
+      if (filters.minConsumption) clauses.push(gte(stats.totalConsumption, filters.minConsumption));
+      if (filters.maxConsumption) clauses.push(lte(stats.totalConsumption, filters.maxConsumption));
+      if (filters.minAveragePrice) clauses.push(gte(stats.averagePrice, filters.minAveragePrice));
+      if (filters.maxAveragePrice) clauses.push(lte(stats.averagePrice, filters.maxAveragePrice));
+      if (filters.minLongestNegativeHours)
+        clauses.push(gte(stats.longestNegativeHours, filters.minLongestNegativeHours));
+      if (filters.maxLongestNegativeHours)
+        clauses.push(lte(stats.longestNegativeHours, filters.maxLongestNegativeHours));
+
+      return and(...clauses);
+    })
     .orderBy((stats) =>
       sortDirection === "asc"
         ? sql`${stats[sortBy]} ASC NULLS FIRST`
         : sql`${stats[sortBy]} DESC NULLS LAST`,
     )
-    .limit(limit)
-    .offset(offset);
+    .as("query");
+
+  // Get total row count and final data with limit and offset using the composed query
+  const { total } = (await db.select({ total: count() }).from(query))[0];
+  const data = await db.select().from(query).limit(limit).offset(offset);
 
   return c.json({
     data,
-    count: totalCount,
+    total,
   });
 });
 

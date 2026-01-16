@@ -3,6 +3,7 @@ import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { DataTable } from "@/components/DataTable";
+import { FilterMenu, type FilterValues } from "@/components/FilterMenu";
 import { Pagination } from "@/components/Pagination";
 import { Search } from "@/components/Search";
 import { statsOptions } from "@/queries/stats";
@@ -13,6 +14,7 @@ const defaultValues = {
   sortBy: "date",
   sortDirection: "desc",
   q: "",
+  filters: {},
 } as const;
 
 const statsSearchSchema = z.object({
@@ -21,6 +23,8 @@ const statsSearchSchema = z.object({
   sortBy: z.string().default(defaultValues.sortBy),
   sortDirection: z.enum(["asc", "desc"]).default(defaultValues.sortDirection),
   q: z.string().default(defaultValues.q),
+  // TODO: validate filters
+  filters: z.record(z.string(), z.string()).default(defaultValues.filters),
 });
 
 export const Route = createFileRoute("/")({
@@ -32,20 +36,22 @@ export const Route = createFileRoute("/")({
 });
 
 function RouteComponent() {
-  const { page, pageSize, sortBy, sortDirection, q: query } = Route.useSearch();
+  const { page, pageSize, sortBy, sortDirection, q: query, filters } = Route.useSearch();
   const navigate = Route.useNavigate();
 
-  const { data: stats } = useQuery({
+  const { data: stats, isError } = useQuery({
     ...statsOptions({
       sortBy,
       sortDirection,
       search: query || undefined,
       offset: (page - 1) * pageSize,
       limit: pageSize,
+      filters: Object.keys(filters).length ? JSON.stringify(filters) : undefined,
     }),
     placeholderData: (prev) => prev,
   });
 
+  if (isError) return "Something went wrong :(";
   if (!stats) return null;
 
   const handleSort = (column: string) => {
@@ -77,12 +83,19 @@ function RouteComponent() {
     });
   };
 
+  const handleFiltersChange = (values: FilterValues) => {
+    void navigate({
+      search: (prev) => ({ ...prev, filters: values }),
+    });
+  };
+
   return (
     <div className="enter space-y-2">
       <h1 className="mb-4">Electricity Statistics</h1>
 
-      <div>
+      <div className="flex justify-between gap-2">
         <Search value={query} onChange={handleSearch} />
+        <FilterMenu values={filters} onChange={handleFiltersChange} />
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-border">
@@ -99,7 +112,7 @@ function RouteComponent() {
         onPageChange={handlePageChange}
         pageSize={pageSize}
         onPageSizeChange={handlePageSizeChange}
-        total={stats?.count ?? 0}
+        total={stats?.total ?? 0}
       />
     </div>
   );

@@ -12,20 +12,20 @@ export const Search = ({ value: valueProp, onChange }: SearchProps) => {
     setValue(valueProp);
   }, [valueProp]);
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onChange(value);
+  };
+
   const handleReset = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setValue("");
     onChange("");
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    onChange(value);
-  };
-
   return (
-    <form onSubmit={handleSubmit} onReset={handleReset}>
-      <label className="ui-input w-xs" role="search" aria-label="Search bar">
+    <form className="contents" onSubmit={handleSubmit} onReset={handleReset}>
+      <label className="ui-input w-full md:max-w-sm" role="search" aria-label="Search bar">
         <SearchIcon className="size-4 opacity-50" />
         <input
           placeholder="Search by date"

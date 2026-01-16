@@ -6,6 +6,7 @@
   --foreground: var(--color-zinc-700);
 
   --primary: var(--color-blue-500);
+  --primary-foreground: var(--color-white);
   --secondary: var(--color-zinc-100);
   --subtle: var(--color-zinc-600);
   --border: --alpha(var(--color-black) / 10%);
@@ -21,6 +22,7 @@
   --foreground: var(--color-zinc-200);
 
   --primary: var(--color-blue-500);
+  --primary-foreground: var(--color-white);
   --secondary: var(--color-zinc-800);
   --subtle: var(--color-zinc-300);
   --border: --alpha(var(--color-white) / 10%);
@@ -37,6 +39,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-subtle: var(--subtle);
   --color-border: var(--border);
@@ -51,6 +54,10 @@ body {
   @apply bg-background text-foreground;
 }
 
+#root {
+  isolation: isolate;
+}
+
 h1 {
   @apply text-3xl;
 }
@@ -59,33 +66,48 @@ svg {
   @apply shrink-0;
 }
 
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .enter {
-  @apply animate-in duration-250 fade-in;
+  animation: fade-in ease-out .3s;
 }
 
 @layer components {
+  .ui-card {
+    @apply rounded-lg bg-background p-4 text-foreground outline -outline-offset-1 outline-border;
+  }
+
   .ui-button {
-    @apply flex items-center gap-1 rounded-lg p-2 text-left transition-colors not-disabled:hover:bg-secondary disabled:opacity-50 [&_svg:not([class*='size-'])]:size-5;
+    @apply flex min-h-9 items-center gap-1 rounded-lg p-2 text-left text-sm leading-4 transition-colors not-disabled:hover:bg-secondary disabled:opacity-50 [&_svg:not([class*='size-'])]:size-5;
   }
 
   .ui-table {
-    @apply w-full text-sm leading-5;
+    @apply w-full text-sm leading-4;
 
     thead tr th {
       @apply min-h-10 bg-secondary/40 px-2 py-1 text-left align-middle font-medium text-subtle first:pl-4 last:pr-4;
     }
 
     tbody tr td {
-      @apply border-t border-t-border bg-background p-2 align-middle first:pl-4 last:pr-4;
+      @apply border-t border-t-border bg-background p-2 align-middle first:pl-4 last:not-has-[a,button]:pr-4 has-[a,button]:pl-0;
+    }
+  }
+
+  .ui-fieldset {
+    legend {
+      @apply mb-1 text-sm text-subtle;
     }
   }
 
   .ui-input {
-    @apply inline-flex h-9 items-center gap-2 rounded-lg border border-border px-2 py-1.5 text-sm invalid:border-red-500/30 invalid:bg-red-500/10 aria-invalid:border-red-500/30 aria-invalid:bg-red-500/10;
-
-    &:where(input) {
-      @apply inline-flex;
-    }
+    @apply inline-flex h-9 w-full items-center gap-2 rounded-lg border border-border px-2 py-1.5 text-sm invalid:border-red-500/30 invalid:bg-red-500/10 has-invalid:border-red-500/30 has-invalid:bg-red-500/10 aria-invalid:border-red-500/30 aria-invalid:bg-red-500/10;
 
     :where(input) {
       @apply inline-flex h-full w-full appearance-none border-0 bg-transparent;
@@ -103,6 +125,6 @@ svg {
   }
 
   .ui-select {
-    @apply h-9 rounded-lg border border-border px-2 py-1.5 text-sm;
+    @apply h-9 rounded-lg border border-border px-2 py-1.5 text-sm transition-colors open:bg-secondary not-disabled:hover:bg-secondary;
   }
 }
