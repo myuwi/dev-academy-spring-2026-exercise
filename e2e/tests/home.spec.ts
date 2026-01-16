@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Stats page", () => {
+test.describe("Home page", () => {
   test("user opens the page and sees page content", async ({ page }) => {
     await page.goto("/");
     await expect(page).toHaveTitle(/Electricity Statistics/);
@@ -132,6 +132,22 @@ test.describe("Stats page", () => {
       await expect(page.getByRole("textbox", { name: "Current Page Number" })).toHaveValue("1");
 
       await expect(table.locator("tbody > tr")).toHaveCount(50);
+    });
+  });
+
+  test.describe("Navigation", () => {
+    test("user clicks on an item in the list and arrives on the report page ", async ({ page }) => {
+      await page.goto("/");
+
+      const detailsLink = page
+        .locator("tbody > tr")
+        .filter({ has: page.getByRole("cell", { name: /2024-10-01/ }) })
+        .getByRole("link", { name: "View Details" });
+      await detailsLink.click();
+
+      await expect(page).toHaveURL("/2024-10-01");
+      await expect(page.locator("h1")).toHaveText(/Daily Report/);
+      await expect(page.locator("p")).toHaveText(/2024-10-01/);
     });
   });
 });
