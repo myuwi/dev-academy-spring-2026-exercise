@@ -90,7 +90,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="enter space-y-2">
+    <main className="page enter space-y-2">
       <h1 className="mb-4">Electricity Statistics</h1>
 
       <div className="flex justify-between gap-2">
@@ -114,6 +114,6 @@ function RouteComponent() {
         onPageSizeChange={handlePageSizeChange}
         total={stats?.total ?? 0}
       />
-    </div>
+    </main>
   );
 }

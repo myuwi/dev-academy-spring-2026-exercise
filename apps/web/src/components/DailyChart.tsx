@@ -4,7 +4,7 @@ import { formatTime } from "@/utils";
 import { CustomTooltip } from "./CustomTooltip";
 
 const LegendText = (value: React.ReactNode) => {
-  return <span className="ml-0.5 text-sm text-foreground">{value}</span>;
+  return <span className="ml-0.5 text-foreground">{value}</span>;
 };
 
 interface DailyChartProps {
@@ -30,8 +30,14 @@ export const DailyChart = ({ data }: DailyChartProps) => {
   const minDomain = minDomainPrice;
 
   return (
-    <LineChart className="aspect-[1.8] w-full" responsive data={formattedData}>
-      <CartesianGrid yAxisId="left" vertical={false} strokeDasharray="3" stroke="#ccc" />
+    <LineChart className="h-full w-full" responsive data={formattedData}>
+      <CartesianGrid
+        yAxisId="left"
+        vertical={false}
+        strokeDasharray="3"
+        stroke="var(--color-chart-grid)"
+        syncWithTicks={true}
+      />
       <Line
         yAxisId="left"
         type="monotone"

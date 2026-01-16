@@ -11,8 +11,8 @@ export const Route = createRootRouteWithContext<{
 
 function RootComponent() {
   return (
-    <div className="enter">
-      <nav className="sticky z-50 mx-auto flex h-14 max-w-6xl items-center justify-between bg-background px-2">
+    <div className="enter flex min-h-dvh flex-col">
+      <nav className="sticky z-50 mx-auto flex h-14 w-full max-w-6xl items-center justify-between bg-background px-2">
         <div>
           <Link className="ui-button text-base" to="/">
             <Zap className="fill-current text-blue-500" /> Electricity
@@ -20,9 +20,7 @@ function RootComponent() {
         </div>
         <ThemeButton />
       </nav>
-      <main className="mx-auto my-4 max-w-6xl px-4">
-        <Outlet />
-      </main>
+      <Outlet />
     </div>
   );
 }

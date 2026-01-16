@@ -12,11 +12,11 @@ export const InfoCard = ({ label, value, unit }: InfoCardProps) => {
       <span>
         {value ? (
           <>
-            <span className="text-4xl">{formatNumber(value)}</span>
+            <span className="text-4xl max-sm:text-xl">{formatNumber(value)}</span>
             <span className="text-subtle"> {unit}</span>
           </>
         ) : (
-          <span className="text-4xl">No data</span>
+          <span className="text-4xl max-sm:text-xl">No data</span>
         )}
       </span>
       <span className="text-sm text-subtle">{label}</span>

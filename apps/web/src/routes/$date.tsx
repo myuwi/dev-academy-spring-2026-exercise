@@ -30,23 +30,23 @@ function RouteComponent() {
   const averagePrice = prices.length && prices.reduce((acc, p) => acc + p) / prices.length;
 
   return (
-    <div className="enter">
-      <div className="flex flex-row justify-between gap-4 max-lg:flex-col">
-        <div className="mb-0">
+    <main className="page enter gap-6">
+      <div className="flex flex-wrap justify-between gap-x-8 gap-y-4 max-sm:contents">
+        <div>
           <h1>Daily Report</h1>
           <p className="text-sm text-subtle">{date}</p>
         </div>
 
-        <div className="flex flex-row justify-end gap-4">
+        <div className="flex flex-row justify-end gap-4 max-sm:justify-around sm:grow">
           <InfoCard label="Total Consumption" value={totals.consumptionAmount} unit="MWh" />
           <InfoCard label="Total Production" value={totals.productionAmount} unit="MWh" />
           <InfoCard label="Average Price" value={averagePrice} unit="c/kWh" />
         </div>
       </div>
 
-      <div className="mt-8 rounded-lg border border-border p-4 text-sm">
-        {stats && <DailyChart data={stats.data} />}
+      <div className="aspect-[1.8] grow text-sm max-sm:text-xs">
+        <DailyChart data={stats.data} />
       </div>
-    </div>
+    </main>
   );
 }

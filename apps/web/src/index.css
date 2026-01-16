@@ -15,6 +15,7 @@
   --chart-1: var(--primary);
   --chart-2: var(--foreground);
   --chart-3: var(--color-orange-400);
+  --chart-grid: var(--color-zinc-300);
 }
 
 .dark {
@@ -30,7 +31,7 @@
 
   --chart-1: var(--primary);
   --chart-2: var(--foreground);
-  --chart-3: var(--color-orange-400);
+  --chart-grid: var(--color-zinc-700);
 }
 
 @theme {
@@ -48,22 +49,25 @@
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
-}
-
-body {
-  @apply bg-background text-foreground;
+  --color-chart-grid: var(--chart-grid);
 }
 
 #root {
   isolation: isolate;
 }
 
-h1 {
-  @apply text-3xl;
-}
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+  }
 
-svg {
-  @apply shrink-0;
+  h1 {
+    @apply text-3xl;
+  }
+
+  svg {
+    @apply shrink-0;
+  }
 }
 
 @keyframes fade-in {
@@ -76,10 +80,14 @@ svg {
 }
 
 .enter {
-  animation: fade-in ease-out .3s;
+  animation: fade-in ease-out 0.3s;
 }
 
 @layer components {
+  .page {
+    @apply mx-auto my-4 flex w-full max-w-6xl grow flex-col px-4;
+  }
+
   .ui-card {
     @apply rounded-lg bg-background p-4 text-foreground outline -outline-offset-1 outline-border;
   }
