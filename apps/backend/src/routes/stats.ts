@@ -1,38 +1,16 @@
 import { zValidator } from "@hono/zod-validator";
-import { and, asc, avg, count, eq, gte, ilike, lt, lte, max, SQL, sql, sum } from "drizzle-orm";
+import { and, asc, count, eq, gte, ilike, lt, lte, SQL, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import * as z from "zod";
 import { db } from "../db";
 import { electricityData } from "../db/schema";
-import { coalesce } from "../db/utils";
-
-const FiltersSchema = z.object({
-  startDate: z.iso.date().optional(),
-  endDate: z.iso.date().optional(),
-  minProduction: z.coerce.number().optional(),
-  maxProduction: z.coerce.number().optional(),
-  minConsumption: z.coerce.number().optional(),
-  maxConsumption: z.coerce.number().optional(),
-  minAveragePrice: z.coerce.number().optional(),
-  maxAveragePrice: z.coerce.number().optional(),
-  minLongestNegativeHours: z.coerce.number().optional(),
-  maxLongestNegativeHours: z.coerce.number().optional(),
-});
-
-const QuerySchema = z.object({
-  sortBy: z
-    .enum(["date", "totalProduction", "totalConsumption", "averagePrice", "longestNegativeHours"])
-    .optional(),
-  sortDirection: z.enum(["asc", "desc"]).optional(),
-  search: z.string().optional(),
-  limit: z.coerce.number().min(1).max(500).optional(),
-  offset: z.coerce.number().min(0).optional(),
-  filters: z.preprocess((val: string) => JSON.parse(val), FiltersSchema).optional(),
-});
+import { GetStatsQuerySchema } from "../schemas/stats";
 
 const stats = new Hono();
 
-stats.get("/", zValidator("query", QuerySchema), async (c) => {
+// TODO: Take timezone into account when doing aggregations
+
+stats.get("/", zValidator("query", GetStatsQuerySchema), async (c) => {
   const {
     limit = 50,
     offset = 0,
@@ -71,16 +49,17 @@ stats.get("/", zValidator("query", QuerySchema), async (c) => {
     .groupBy(negativeSince.date, negativeSince.negativeSince)
     .as("negative_streaks");
 
-  // Calculate daily aggregates
-  const aggregates = db
-    .select({
-      date: electricityData.date,
-      totalProduction: sum(electricityData.productionAmount).as("tp"),
-      // Convert from kWh to MWh
-      totalConsumption: sql`${sum(electricityData.consumptionAmount)} / 1000`.as("tc"),
-      averagePrice: avg(electricityData.hourlyPrice).as("ap"),
-      longestNegativeHours: coalesce(max(negativeStreaks.length), "0").as("lnh"),
-    })
+  // Calculate daily aggregates and apply filters
+  // prettier-ignore
+  const select = {
+    date: electricityData.date,
+    totalProduction: sql<number | null>`cast(sum(${electricityData.productionAmount}) as float)`.as("total_production"),
+    totalConsumption: sql<number | null>`cast(sum(${electricityData.consumptionAmount}) / 1000 as float)`.as("total_consumption"),
+    averagePrice: sql<number | null>`cast(avg(${electricityData.hourlyPrice}) as float)`.as("average_price"),
+    longestNegativeHours: sql<number>`cast(coalesce(max(${negativeStreaks.length}), 0) as int)`.as("longest_negative_hours"),
+  };
+  const query = db
+    .select(select)
     .from(electricityData)
     .leftJoin(
       negativeStreaks,
@@ -90,22 +69,10 @@ stats.get("/", zValidator("query", QuerySchema), async (c) => {
       ),
     )
     .groupBy(electricityData.date)
-    .as("aggregates");
-
-  // Compose the final columns and apply filters
-  const query = db
-    .select({
-      date: aggregates.date,
-      totalProduction: sql<number | null>`cast(${aggregates.totalProduction} as float)`.as("tp"),
-      totalConsumption: sql<number | null>`cast(${aggregates.totalConsumption} as float)`.as("tc"),
-      averagePrice: sql<number | null>`cast(${aggregates.averagePrice} as float)`.as("ap"),
-      longestNegativeHours: sql<number>`cast(${aggregates.longestNegativeHours} as int)`.as("lnh"),
-    })
-    .from(aggregates)
-    .where((stats) => {
+    .having((stats) => {
       let clauses: SQL[] = [];
 
-      // This is kind of cursed but it works :)
+      // This looks kind of cursed but is also probably the simplest way to do this :)
       if (search) clauses.push(ilike(sql`${stats.date}::text`, `%${search}%`));
       if (filters.startDate) clauses.push(gte(sql`${stats.date}::text`, filters.startDate));
       if (filters.endDate) clauses.push(lte(sql`${stats.date}::text`, filters.endDate));
