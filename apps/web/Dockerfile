@@ -12,5 +12,6 @@ RUN bun i --frozen-lockfile --production
 COPY apps/web ./apps/web
 RUN bun --cwd=apps/web run build
 
-FROM nginx:1.25-alpine AS runner
-COPY --from=builder /app/apps/web/dist /usr/share/nginx/html
+FROM caddy:2-alpine
+COPY apps/web/Caddyfile /etc/caddy/Caddyfile
+COPY --from=builder /app/apps/web/dist /var/www
