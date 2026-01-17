@@ -1,0 +1,46 @@
+services:
+  db:
+    image: ghcr.io/myuwi/dev-academy-db:latest
+    environment:
+      POSTGRES_USER: academy
+      POSTGRES_PASSWORD: academy
+      POSTGRES_DB: electricity
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "academy", "-d", "electricity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal
+
+  backend:
+    image: ghcr.io/myuwi/dev-academy-backend:latest
+    environment:
+      - DATABASE_URL=postgres://academy:academy@db:5432/electricity
+    networks:
+      - internal
+      - proxy
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.dev_academy_backend.rule=Host(`dev-academy.myuwi.dev`) && PathPrefix(`/api`)"
+        - "traefik.http.routers.dev_academy_backend.middlewares=strip-api"
+        - "traefik.http.middlewares.strip-api.stripprefix.prefixes=/api"
+        - "traefik.http.services.dev_academy_backend.loadbalancer.server.port=3000"
+
+  web:
+    image: ghcr.io/myuwi/dev-academy-web:latest
+    networks:
+      - internal
+      - proxy
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.dev_academy_web.rule=Host(`dev-academy.myuwi.dev`)"
+        - "traefik.http.services.dev_academy_web.loadbalancer.server.port=80"
+
+networks:
+  internal:
+    driver: overlay
+  proxy:
+    external: true
