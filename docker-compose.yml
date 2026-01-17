@@ -1,6 +1,6 @@
 services:
   db:
-    image: dev-academy-db:latest
+    image: ghcr.io/myuwi/dev-academy-db:latest
     restart: unless-stopped
     build:
       context: .
@@ -16,7 +16,7 @@ services:
       retries: 5
 
   backend:
-    image: dev-academy-backend:latest
+    image: ghcr.io/myuwi/dev-academy-backend:latest
     restart: unless-stopped
     build:
       context: .
@@ -28,7 +28,7 @@ services:
         condition: service_healthy
 
   web:
-    image: dev-academy-web:latest
+    image: ghcr.io/myuwi/dev-academy-web:latest
     restart: unless-stopped
     build:
       context: .

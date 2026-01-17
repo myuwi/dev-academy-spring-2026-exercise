@@ -64,9 +64,6 @@ jobs:
 
       - name: Publish Docker images to GitHub Container Registry
         run: |
-          docker tag dev-academy-web:latest ghcr.io/${{ github.repository_owner }}/dev-academy-web:latest
-          docker tag dev-academy-backend:latest ghcr.io/${{ github.repository_owner }}/dev-academy-backend:latest
-          docker tag dev-academy-db:latest ghcr.io/${{ github.repository_owner }}/dev-academy-db:latest
           docker push ghcr.io/${{ github.repository_owner }}/dev-academy-web:latest
           docker push ghcr.io/${{ github.repository_owner }}/dev-academy-backend:latest
           docker push ghcr.io/${{ github.repository_owner }}/dev-academy-db:latest
