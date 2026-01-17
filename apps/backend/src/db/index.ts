@@ -1,44 +1,33 @@
-import { sleep, SQL } from "bun";
-import { drizzle } from "drizzle-orm/bun-sql";
-import { migrate } from "drizzle-orm/bun-sql/migrator";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { Pool } from "pg";
+import { retry } from "../utils";
 import * as schema from "./schema";
 
 // Retain the original db connection across HMR updates in development
 const globalThis_ = globalThis as unknown as {
-  db?: ReturnType<typeof drizzle<typeof schema>> & {
-    $client: SQL;
-  };
+  db?: ReturnType<typeof drizzle<typeof schema, Pool>>;
 };
 
-const client = new SQL(process.env.DATABASE_URL!);
+const client = new Pool({ connectionString: process.env.DATABASE_URL! });
 
 const db = globalThis_.db ?? drizzle({ client, schema });
 if (process.env.NODE_ENV !== "production") globalThis_.db = db;
 
 console.info("Establishing a database connection...");
 
-let retries = 0;
-const maxAttempts = 5;
-const retryConnect = async () => {
-  try {
-    await client.connect();
-  } catch (e) {
-    console.error("Database connection failed:", (e as Error)?.message || e);
-    if (retries > maxAttempts) {
-      console.error("Maximum connection attempts reached. Terminating...");
-      process.exit(1);
-    }
+await retry(() => db.execute("select 1"), {
+  onError: (_e, _attempt, timeout) => {
+    console.error(
+      `Unable to connect to the database. Waiting ${timeout / 1000} seconds before retrying connection...`,
+    );
+  },
+});
 
-    const timeout = 5000 * Math.pow(2, retries);
-    console.info(`Waiting ${timeout / 1000} seconds and retrying connection...`);
-    await sleep(timeout);
-    retries++;
-    await retryConnect();
-  }
-};
-await retryConnect();
 console.info("Database connection established.");
+console.info("Running migrations...");
 
 await migrate(db, { migrationsFolder: "./drizzle" });
+console.info("Migrations complete.");
 
 export { db };
