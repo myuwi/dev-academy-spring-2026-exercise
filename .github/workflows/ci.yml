@@ -64,9 +64,12 @@ jobs:
 
       - name: Publish Docker images to GitHub Container Registry
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/dev-academy-web:latest
-          docker push ghcr.io/${{ github.repository_owner }}/dev-academy-backend:latest
-          docker push ghcr.io/${{ github.repository_owner }}/dev-academy-db:latest
+          docker tag ghcr.io/${{ github.repository_owner }}/dev-academy-web:latest ghcr.io/${{ github.repository_owner }}/dev-academy-web:${{ github.sha }}
+          docker tag ghcr.io/${{ github.repository_owner }}/dev-academy-backend:latest ghcr.io/${{ github.repository_owner }}/dev-academy-backend:${{ github.sha }}
+          docker tag ghcr.io/${{ github.repository_owner }}/dev-academy-db:latest ghcr.io/${{ github.repository_owner }}/dev-academy-db:${{ github.sha }}
+          docker push --all-tags ghcr.io/${{ github.repository_owner }}/dev-academy-web
+          docker push --all-tags ghcr.io/${{ github.repository_owner }}/dev-academy-backend
+          docker push --all-tags ghcr.io/${{ github.repository_owner }}/dev-academy-db
 
   deploy:
     name: Deploy
@@ -77,6 +80,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
+      - name: Create env file
+        run: |
+          echo "GIT_COMMIT_HASH=${{ github.sha }}" >> ./envfile
+
       - name: Docker Stack Deploy
         uses: cssnr/stack-deploy-action@v1
         with:
@@ -85,3 +92,7 @@ jobs:
           user: ${{ secrets.DEPLOY_USER }}
           host: ${{ secrets.DEPLOY_HOST }}
           ssh_key: ${{ secrets.DEPLOY_SSH_KEY }}
+          env_file: ./envfile
+          registry_host: "ghcr.io"
+          registry_user: ${{ github.actor }}
+          registry_pass: ${{ secrets.GITHUB_TOKEN }}

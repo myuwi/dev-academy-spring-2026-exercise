@@ -1,6 +1,6 @@
 services:
   db:
-    image: ghcr.io/myuwi/dev-academy-db:latest
+    image: ghcr.io/myuwi/dev-academy-db:${GIT_COMMIT_HASH:-latest}
     environment:
       POSTGRES_USER: academy
       POSTGRES_PASSWORD: academy
@@ -14,7 +14,7 @@ services:
       - internal
 
   backend:
-    image: ghcr.io/myuwi/dev-academy-backend:latest
+    image: ghcr.io/myuwi/dev-academy-backend:${GIT_COMMIT_HASH:-latest}
     environment:
       - DATABASE_URL=postgres://academy:academy@db:5432/electricity
     networks:
@@ -29,7 +29,7 @@ services:
         - "traefik.http.services.dev_academy_backend.loadbalancer.server.port=3000"
 
   web:
-    image: ghcr.io/myuwi/dev-academy-web:latest
+    image: ghcr.io/myuwi/dev-academy-web:${GIT_COMMIT_HASH:-latest}
     networks:
       - internal
       - proxy
