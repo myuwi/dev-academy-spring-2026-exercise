@@ -135,6 +135,70 @@ test.describe("Home page", () => {
     });
   });
 
+  test.describe("Filtering", () => {
+    test("user filters by dates in 2024 with minimum price of 10, and sees the filtered results", async ({
+      page,
+    }) => {
+      await page.goto("/");
+
+      await page.getByRole("button", { name: "active filter(s)" }).click();
+
+      await page.getByRole("textbox", { name: "Start Date" }).fill("2024-09-01");
+      await page
+        .getByRole("group", { name: "Average Price" })
+        .getByPlaceholder("Minimum")
+        .fill("10");
+      await page.getByRole("button", { name: "Apply" }).click();
+
+      const table = page.getByRole("table", { name: "Data Table" });
+      await expect(table.locator("tbody > tr")).toHaveCount(6);
+    });
+
+    test("user filters by dates in 2024 and sorts by 'Average Price' descending, and sees the cheapest days in 2024 first.", async ({
+      page,
+    }) => {
+      await page.goto("/");
+
+      await page.getByRole("button", { name: "active filter(s)" }).click();
+
+      await page.getByPlaceholder("Start Date").fill("2024-01-01");
+      await page.getByPlaceholder("End Date").fill("2024-12-31");
+      await page.getByRole("button", { name: "Apply" }).click();
+
+      await page.getByRole("button", { name: "Average Price (c/kWh)" }).click();
+      await page.getByRole("button", { name: "Average Price (c/kWh)" }).click();
+
+      await expect(page.locator("tbody > tr").first()).toHaveText(/-0\.53/);
+    });
+
+    test("user applies filters matching no results, and sees an empty page", async ({ page }) => {
+      await page.goto("/");
+
+      await page.getByRole("button", { name: "active filter(s)" }).click();
+      const productionFilters = page.getByRole("group", { name: "Production Amount" });
+
+      await productionFilters.getByPlaceholder("Minimum").fill("100");
+      await productionFilters.getByPlaceholder("Maximum").fill("200");
+      await page.getByRole("button", { name: "Apply" }).click();
+
+      const table = page.getByRole("table", { name: "Data Table" });
+      await expect(table.locator("tbody > tr")).toHaveCount(0);
+    });
+
+    test("user resets active filters, and sees unfiltered results", async ({ page }) => {
+      await page.goto('/?filters={"maxProduction":"1000"}');
+      const table = page.getByRole("table", { name: "Data Table" });
+      await expect(table.locator("tbody > tr")).toHaveCount(0);
+
+      await page.getByRole("button", { name: "1 active filter(s)" }).click();
+
+      await page.getByRole("button", { name: "Reset" }).click();
+
+      await expect(table.locator("tbody > tr")).toHaveCount(10);
+      await expect(page.getByText("Showing 1-10 of 1371")).toBeVisible();
+    });
+  });
+
   test.describe("Navigation", () => {
     test("user clicks on an item in the list and arrives on the report page ", async ({ page }) => {
       await page.goto("/");

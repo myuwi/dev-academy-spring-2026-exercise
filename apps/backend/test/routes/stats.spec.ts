@@ -171,3 +171,31 @@ describe("GET /stats", async () => {
     expect(json.total).toBe(0);
   });
 });
+
+describe("GET /stats/:date", async () => {
+  it("should return 404 when no data is available", async () => {
+    const url = mockUrl("/stats/2026-01-01");
+    const res = await app.request(url);
+
+    expect(res.status).toBe(404);
+  });
+
+  it("should return 400 on invalid iso date", async () => {
+    const url = mockUrl("/stats/foo");
+    const res = await app.request(url);
+
+    expect(res.status).toBe(400);
+  });
+
+  it("should return 400 on invalid iso date", async () => {
+    await seedElectricityData();
+    const url = mockUrl("/stats/2026-01-01");
+    const res = await app.request(url);
+
+    expect(res.status).toBe(200);
+
+    const json = (await res.json()) as any;
+    expect(json.date).toBe("2026-01-01");
+    expect(json.data).toBeArrayOfSize(24);
+  });
+});
