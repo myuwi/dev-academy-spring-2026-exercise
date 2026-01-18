@@ -73,6 +73,7 @@ Listed below are the features included in the application.
 - [ ] Use correct time zone for aggregations (currently incorrectly assumes UTC)
 - [ ] Add more tests
 - [ ] Add OpenAPI (Swagger) definitions for Backend API
+- [ ] I18n and locale support
 
 ## REST API Endpoints
 

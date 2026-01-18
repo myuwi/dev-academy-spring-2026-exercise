@@ -1,5 +1,8 @@
 export const formatNumber = (value: number, decimals: number = 2) => {
-  return value.toFixed(decimals);
+  return new Intl.NumberFormat("en-GB", {
+    maximumFractionDigits: decimals,
+    minimumFractionDigits: decimals,
+  }).format(value);
 };
 
 export const formatTime = (value: string) => {
