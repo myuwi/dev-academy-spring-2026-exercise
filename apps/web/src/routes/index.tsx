@@ -3,6 +3,7 @@ import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { DataTable } from "@/components/DataTable";
+import { ErrorPage } from "@/components/ErrorPage";
 import { FilterMenu, type FilterValues } from "@/components/FilterMenu";
 import { Pagination } from "@/components/Pagination";
 import { Search } from "@/components/Search";
@@ -39,7 +40,7 @@ function RouteComponent() {
   const { page, pageSize, sortBy, sortDirection, q: query, filters } = Route.useSearch();
   const navigate = Route.useNavigate();
 
-  const { data: stats, isError } = useQuery({
+  const { data: stats, error } = useQuery({
     ...statsOptions({
       sortBy,
       sortDirection,
@@ -51,7 +52,7 @@ function RouteComponent() {
     placeholderData: (prev) => prev,
   });
 
-  if (isError) return "Something went wrong :(";
+  if (error) return <ErrorPage error={error} />;
   if (!stats) return null;
 
   const handleSort = (column: string) => {

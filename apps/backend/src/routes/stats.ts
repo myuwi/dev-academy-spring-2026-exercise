@@ -121,6 +121,8 @@ stats.get("/:date", zValidator("param", z.object({ date: z.iso.date() })), async
     .where(eq(sql`${electricityData.date}::text`, date))
     .orderBy((stats) => asc(stats.startTime));
 
+  if (!data.length) return c.json({ message: "No data available for the chosen date." }, 404);
+
   return c.json({
     date,
     data,

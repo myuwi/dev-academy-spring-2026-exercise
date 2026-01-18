@@ -1,12 +1,16 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import type { HTTPError } from "ky";
 import { DailyChart } from "@/components/DailyChart";
+import { ErrorPage } from "@/components/ErrorPage";
 import { InfoCard } from "@/components/InfoCard";
 import { dailyStatsOptions } from "@/queries/stats";
 
 export const Route = createFileRoute("/$date")({
   component: RouteComponent,
-  errorComponent: () => "404 Not Found",
+  errorComponent: ({ error }) => {
+    return <ErrorPage error={error as HTTPError} />;
+  },
   loader: ({ context: { queryClient }, params: { date } }) => {
     return queryClient.ensureQueryData(dailyStatsOptions(date));
   },

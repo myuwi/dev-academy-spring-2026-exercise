@@ -7,6 +7,11 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
   component: RootComponent,
+  notFoundComponent: () => {
+    const navigate = Route.useNavigate();
+    void navigate({ to: "/" });
+    return null;
+  },
 });
 
 function RootComponent() {
