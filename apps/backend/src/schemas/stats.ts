@@ -9,13 +9,19 @@ const FiltersSchema = z.object({
   maxConsumption: z.coerce.number().optional(),
   minAveragePrice: z.coerce.number().optional(),
   maxAveragePrice: z.coerce.number().optional(),
-  minLongestNegativeHours: z.coerce.number().optional(),
-  maxLongestNegativeHours: z.coerce.number().optional(),
+  minLongestNegativePriceHours: z.coerce.number().optional(),
+  maxLongestNegativePriceHours: z.coerce.number().optional(),
 });
 
 export const GetStatsQuerySchema = z.object({
   sortBy: z
-    .enum(["date", "totalProduction", "totalConsumption", "averagePrice", "longestNegativeHours"])
+    .enum([
+      "date",
+      "totalProduction",
+      "totalConsumption",
+      "averagePrice",
+      "longestNegativePriceHours",
+    ])
     .optional(),
   sortDirection: z.enum(["asc", "desc"]).optional(),
   search: z.string().optional(),

@@ -6,7 +6,7 @@ export interface DailyStat {
   totalProduction: number | null;
   totalConsumption: number | null;
   averagePrice: number | null;
-  longestNegativeHours: number;
+  longestNegativePriceHours: number;
 }
 
 export interface HourlyStat {

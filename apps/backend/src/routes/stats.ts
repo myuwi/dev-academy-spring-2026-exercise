@@ -56,7 +56,7 @@ stats.get("/", zValidator("query", GetStatsQuerySchema), async (c) => {
     totalProduction: sql<number | null>`cast(sum(${electricityData.productionAmount}) as float)`.as("total_production"),
     totalConsumption: sql<number | null>`cast(sum(${electricityData.consumptionAmount}) / 1000 as float)`.as("total_consumption"),
     averagePrice: sql<number | null>`cast(avg(${electricityData.hourlyPrice}) as float)`.as("average_price"),
-    longestNegativeHours: sql<number>`cast(coalesce(max(${negativeStreaks.length}), 0) as int)`.as("longest_negative_hours"),
+    longestNegativePriceHours: sql<number>`cast(coalesce(max(${negativeStreaks.length}), 0) as int)`.as("longest_negative_hours"),
   };
   const query = db
     .select(select)
@@ -82,10 +82,10 @@ stats.get("/", zValidator("query", GetStatsQuerySchema), async (c) => {
       if (filters.maxConsumption) clauses.push(lte(stats.totalConsumption, filters.maxConsumption));
       if (filters.minAveragePrice) clauses.push(gte(stats.averagePrice, filters.minAveragePrice));
       if (filters.maxAveragePrice) clauses.push(lte(stats.averagePrice, filters.maxAveragePrice));
-      if (filters.minLongestNegativeHours)
-        clauses.push(gte(stats.longestNegativeHours, filters.minLongestNegativeHours));
-      if (filters.maxLongestNegativeHours)
-        clauses.push(lte(stats.longestNegativeHours, filters.maxLongestNegativeHours));
+      if (filters.minLongestNegativePriceHours)
+        clauses.push(gte(stats.longestNegativePriceHours, filters.minLongestNegativePriceHours));
+      if (filters.maxLongestNegativePriceHours)
+        clauses.push(lte(stats.longestNegativePriceHours, filters.maxLongestNegativePriceHours));
 
       return and(...clauses);
     })

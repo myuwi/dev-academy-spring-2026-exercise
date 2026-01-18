@@ -72,6 +72,7 @@ Listed below are the features included in the application.
 
 - [ ] Use correct time zone for aggregations (currently incorrectly assumes UTC)
 - [ ] More tests
+- [ ] Swagger UI for Backend API
 
 ## Running the project
 

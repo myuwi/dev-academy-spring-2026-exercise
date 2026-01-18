@@ -42,9 +42,12 @@ export const DataTable = ({ data, sortBy, sortDirection, onSort }: DataTableProp
             </button>
           </th>
           <th>
-            <button className="ui-button -ml-2" onClick={() => onSort("longestNegativeHours")}>
+            <button className="ui-button -ml-2" onClick={() => onSort("longestNegativePriceHours")}>
               Longest Negative Price Streak (hrs)
-              <SortIndicator active={sortBy === "longestNegativeHours"} direction={sortDirection} />
+              <SortIndicator
+                active={sortBy === "longestNegativePriceHours"}
+                direction={sortDirection}
+              />
             </button>
           </th>
           <th></th>
@@ -52,14 +55,20 @@ export const DataTable = ({ data, sortBy, sortDirection, onSort }: DataTableProp
       </thead>
       <tbody>
         {data.map(
-          ({ date, totalProduction, totalConsumption, averagePrice, longestNegativeHours }) => {
+          ({
+            date,
+            totalProduction,
+            totalConsumption,
+            averagePrice,
+            longestNegativePriceHours,
+          }) => {
             return (
               <tr key={date}>
                 <td>{date}</td>
                 <td>{totalProduction ? formatNumber(totalProduction) : "No data"}</td>
                 <td>{totalConsumption ? formatNumber(totalConsumption) : "No data"}</td>
                 <td>{averagePrice ? formatNumber(averagePrice) : "No data"}</td>
-                <td>{longestNegativeHours}</td>
+                <td>{longestNegativePriceHours}</td>
                 <td>
                   <Link
                     className="ui-button size-9 ring ring-border"

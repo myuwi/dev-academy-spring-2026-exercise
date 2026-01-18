@@ -38,7 +38,7 @@ describe("GET /stats", async () => {
     expect(json.total).toBe(7);
   });
 
-  it("should calculate longestNegativeHours correctly", async () => {
+  it("should calculate longestNegativePriceHours correctly", async () => {
     await seedElectricityData();
     const url = mockUrl("/stats");
     const res = await app.request(url);
@@ -46,9 +46,9 @@ describe("GET /stats", async () => {
     expect(res.status).toBe(200);
 
     const json = (await res.json()) as any;
-    expect(json.data[0].longestNegativeHours).toBe(0);
-    expect(json.data[1].longestNegativeHours).toBe(5);
-    expect(json.data[2].longestNegativeHours).toBe(1);
+    expect(json.data[0].longestNegativePriceHours).toBe(0);
+    expect(json.data[1].longestNegativePriceHours).toBe(5);
+    expect(json.data[2].longestNegativePriceHours).toBe(1);
   });
 
   it("should return data ordered by date asc when no query parameters are set", async () => {

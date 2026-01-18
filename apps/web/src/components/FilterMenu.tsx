@@ -20,8 +20,8 @@ export type FilterValues = {
   maxConsumption?: string;
   minAveragePrice?: string;
   maxAveragePrice?: string;
-  minLongestNegativeHours?: string;
-  maxLongestNegativeHours?: string;
+  minLongestNegativePriceHours?: string;
+  maxLongestNegativePriceHours?: string;
 };
 
 export interface FilterMenuProps {
@@ -125,14 +125,14 @@ export const FilterMenu = ({ values: activeValues, onChange }: FilterMenuProps) 
         <div className="flex items-center gap-1">
           <input
             className="ui-input"
-            {...register("minLongestNegativeHours")}
+            {...register("minLongestNegativePriceHours")}
             placeholder="Minimum"
             pattern={posIntPattern}
           />
           -
           <input
             className="ui-input"
-            {...register("maxLongestNegativeHours")}
+            {...register("maxLongestNegativePriceHours")}
             placeholder="Maximum"
             pattern={posIntPattern}
           />
