@@ -1,0 +1,132 @@
+{
+  "id": "08eb7f44-40d5-44f5-bec6-e8d06178fa9f",
+  "prevId": "5d930c08-f646-4072-bf37-7c2dd4ddee57",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.electricitydata": {
+      "name": "electricitydata",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "electricitydata_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "date": {
+          "name": "date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "starttime": {
+          "name": "starttime",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "productionamount": {
+          "name": "productionamount",
+          "type": "numeric(11, 5)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "consumptionamount": {
+          "name": "consumptionamount",
+          "type": "numeric(11, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hourlyprice": {
+          "name": "hourlyprice",
+          "type": "numeric(6, 3)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "electricitydata_starttime_unique": {
+          "name": "electricitydata_starttime_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "starttime"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {
+    "public.electricity_data_tz_view": {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "electricity_data_tz_view_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "productionamount": {
+          "name": "productionamount",
+          "type": "numeric(11, 5)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "consumptionamount": {
+          "name": "consumptionamount",
+          "type": "numeric(11, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hourlyprice": {
+          "name": "hourlyprice",
+          "type": "numeric(6, 3)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "definition": "select \"id\", (\"electricitydata\".\"starttime\" AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Helsinki')::date as \"date\", (\"electricitydata\".\"starttime\" AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Helsinki') as \"start_time\", \"productionamount\", \"consumptionamount\", \"hourlyprice\" from \"electricitydata\"",
+      "name": "electricity_data_tz_view",
+      "schema": "public",
+      "isExisting": false,
+      "materialized": false
+    }
+  },
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

@@ -3,12 +3,10 @@ import { and, asc, count, eq, gte, ilike, lt, lte, SQL, sql } from "drizzle-orm"
 import { Hono } from "hono";
 import * as z from "zod";
 import { db } from "../db";
-import { electricityData } from "../db/schema";
+import { electricityDataTz } from "../db/schema";
 import { GetStatsQuerySchema } from "../schemas/stats";
 
 const stats = new Hono();
-
-// TODO: Take timezone into account when doing aggregations
 
 stats.get("/", zValidator("query", GetStatsQuerySchema), async (c) => {
   const {
@@ -24,17 +22,17 @@ stats.get("/", zValidator("query", GetStatsQuerySchema), async (c) => {
   // assigning a "negative since" value for each negative price hour
   const negativeSince = db
     .select({
-      date: electricityData.date,
+      date: sql`${electricityDataTz.date}`.as("date_n"),
       negativeSince: sql<number>`
-        extract(hour from ${electricityData.startTime}) - row_number() over (
-          partition by ${electricityData.date}
-          order by ${electricityData.startTime}
+        extract(hour from ${electricityDataTz.startTime}) - row_number() over (
+          partition by ${electricityDataTz.date}
+          order by ${electricityDataTz.startTime}
         ) + 1
       `.as("negative_since"),
     })
-    .from(electricityData)
-    .where(lt(electricityData.hourlyPrice, "0"))
-    .orderBy(electricityData.startTime)
+    .from(electricityDataTz)
+    .where(lt(electricityDataTz.hourlyPrice, "0"))
+    .orderBy(electricityDataTz.startTime)
     .as("negative_since");
 
   // Calculate the length of each negative price streak by counting the number
@@ -52,23 +50,23 @@ stats.get("/", zValidator("query", GetStatsQuerySchema), async (c) => {
   // Calculate daily aggregates and apply filters
   // prettier-ignore
   const select = {
-    date: electricityData.date,
-    totalProduction: sql<number | null>`cast(sum(${electricityData.productionAmount}) as float)`.as("total_production"),
-    totalConsumption: sql<number | null>`cast(sum(${electricityData.consumptionAmount}) / 1000 as float)`.as("total_consumption"),
-    averagePrice: sql<number | null>`cast(avg(${electricityData.hourlyPrice}) as float)`.as("average_price"),
+    date: electricityDataTz.date,
+    totalProduction: sql<number | null>`cast(sum(${electricityDataTz.productionAmount}) as float)`.as("total_production"),
+    totalConsumption: sql<number | null>`cast(sum(${electricityDataTz.consumptionAmount}) / 1000 as float)`.as("total_consumption"),
+    averagePrice: sql<number | null>`cast(avg(${electricityDataTz.hourlyPrice}) as float)`.as("average_price"),
     longestNegativePriceHours: sql<number>`cast(coalesce(max(${negativeStreaks.length}), 0) as int)`.as("longest_negative_hours"),
   };
   const query = db
     .select(select)
-    .from(electricityData)
+    .from(electricityDataTz)
     .leftJoin(
       negativeStreaks,
       and(
-        eq(electricityData.date, negativeStreaks.date),
-        eq(sql`extract(hour from ${electricityData.startTime})`, negativeStreaks.negativeSince),
+        eq(electricityDataTz.date, negativeStreaks.date),
+        eq(sql`extract(hour from ${electricityDataTz.startTime})`, negativeStreaks.negativeSince),
       ),
     )
-    .groupBy(electricityData.date)
+    .groupBy(electricityDataTz.date)
     .having((stats) => {
       let clauses: SQL[] = [];
 
@@ -111,14 +109,14 @@ stats.get("/:date", zValidator("param", z.object({ date: z.iso.date() })), async
 
   const data = await db
     .select({
-      startTime: electricityData.startTime,
-      productionAmount: sql<number>`cast(${electricityData.productionAmount} as float)`,
+      startTime: electricityDataTz.startTime,
+      productionAmount: sql<number>`cast(${electricityDataTz.productionAmount} as float)`,
       // Convert from kWh to MWh
-      consumptionAmount: sql<number>`cast(${electricityData.consumptionAmount} / 1000 as float)`,
-      hourlyPrice: sql<number>`cast(${electricityData.hourlyPrice} as float)`,
+      consumptionAmount: sql<number>`cast(${electricityDataTz.consumptionAmount} / 1000 as float)`,
+      hourlyPrice: sql<number>`cast(${electricityDataTz.hourlyPrice} as float)`,
     })
-    .from(electricityData)
-    .where(eq(sql`${electricityData.date}::text`, date))
+    .from(electricityDataTz)
+    .where(eq(sql`${electricityDataTz.date}::text`, date))
     .orderBy((stats) => asc(stats.startTime));
 
   if (!data.length) return c.json({ message: "No data available for the chosen date." }, 404);

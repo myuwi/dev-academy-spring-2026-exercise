@@ -15,6 +15,13 @@
       "when": 1768319778837,
       "tag": "0001_fantastic_quasimodo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1768761606084,
+      "tag": "0002_common_frank_castle",
+      "breakpoints": true
     }
   ]
 }

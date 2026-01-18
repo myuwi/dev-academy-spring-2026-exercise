@@ -1,0 +1,1 @@
+CREATE VIEW "public"."electricity_data_tz_view" AS (select "id", ("electricitydata"."starttime" AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Helsinki')::date as "date", ("electricitydata"."starttime" AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Helsinki') as "starttime", "productionamount", "consumptionamount", "hourlyprice" from "electricitydata");
