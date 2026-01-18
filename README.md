@@ -62,10 +62,10 @@ Listed below are the features included in the application.
 - [x] Add Pre-commit hooks for running linter and tests via Husky
 - [x] Running backend in Docker (via Docker Compose or Docker Swarm)
 - [x] Running backend in Cloud (via Docker Swarm and Traefik)
-- [x] Implement a CI/CD pipeline:
+- [x] Implement a CI/CD pipeline that:
   - [x] Runs lints, unit tests, integration tests, and e2e tests
   - [x] Builds and publishes Docker images to GitHub Container Registry
-  - [x] Deploys the project to a Cloud provider via Docker Stack Deploy
+  - [x] Deploys the project to a Cloud provider via Docker Stack Deploy over SSH
 - [x] Implement Dark mode 😎
 
 ### If I had more time
