@@ -86,7 +86,7 @@ function RouteComponent() {
 
   const handleFiltersChange = (values: FilterValues) => {
     void navigate({
-      search: (prev) => ({ ...prev, filters: values }),
+      search: (prev) => ({ ...prev, filters: values, page: 1 }),
     });
   };
 
