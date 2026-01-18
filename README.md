@@ -71,8 +71,112 @@ Listed below are the features included in the application.
 ### If I had more time
 
 - [ ] Use correct time zone for aggregations (currently incorrectly assumes UTC)
-- [ ] More tests
-- [ ] Swagger UI for Backend API
+- [ ] Add more tests
+- [ ] Add OpenAPI (Swagger) definitions for Backend API
+
+## REST API Endpoints
+
+The backend REST API currently provides two endpoints:
+
+### Fetching daily statistics for a given time range
+
+```sh
+GET /api/stats
+```
+
+#### Query parameters
+
+<details>
+<summary>See available query parameters</summary>
+
+##### GetStatsQuerySchema ([See source](./apps/backend/src/schemas/stats.ts))
+
+| Param           | Type        | Default | Description                                                                                         |
+| --------------- | ----------- | ------- | --------------------------------------------------------------------------------------------------- |
+| `sortBy`        | string      | `date`  | One of: `date`, `totalProduction`, `totalConsumption`, `averagePrice`, `longestNegativePriceHours`. |
+| `sortDirection` | string      | `asc`   | `asc` or `desc`                                                                                     |
+| `search`        | string      | -       | Free-text filter                                                                                    |
+| `limit`         | number      | 50      | Page size (1–500)                                                                                   |
+| `offset`        | number      | 0       | Number of rows to skip (>= 0)                                                                       |
+| `filters`       | JSON object | -       | **Stringified JSON** object matching `FiltersSchema` below                                          |
+
+##### FiltersSchema
+
+| Key                            | Type     | Description                                   |
+| ------------------------------ | -------- | --------------------------------------------- |
+| `startDate`                    | ISO date | Inclusive minimum date bound (`YYYY-MM-DD`)   |
+| `endDate`                      | ISO date | Inclusive maximum date bound (`YYYY-MM-DD`)   |
+| `minProduction`                | number\* | Minimum total production (MWh)                |
+| `maxProduction`                | number\* | Maximum total production (MWh)                |
+| `minConsumption`               | number\* | Minimum total consumption (MWh)               |
+| `maxConsumption`               | number\* | Maximum total consumption (MWh)               |
+| `minAveragePrice`              | number\* | Minimum average price (c/kWh)                 |
+| `maxAveragePrice`              | number\* | Maximum average price (c/kWh)                 |
+| `minLongestNegativePriceHours` | number\* | Minimum consecutive hours with negative price |
+| `maxLongestNegativePriceHours` | number\* | Maximum consecutive hours with negative price |
+
+\* also accepts a numeric string (e.g., `"10"`)
+
+</details>
+
+#### Example Request
+
+```sh
+GET /api/stats?limit=50&sortBy=averagePrice&sortDirection=desc&filters={"startDate":"2024-01-01","minAveragePrice":10}
+```
+
+#### Example Response
+
+```json
+{
+  "data": [
+    {
+      "date": "2024-01-05",
+      "totalProduction": 4617946,
+      "totalConsumption": 228510.352884,
+      "averagePrice": 109.96808333333334,
+      "longestNegativeHours": 0
+    },
+    ...
+  ],
+  "total": 47
+}
+```
+
+### Fetching hourly statistics for a specific date
+
+```
+GET /api/stats/:date
+```
+
+#### Path Parameters
+
+| Param   | Type     | Description                       |
+| ------- | -------- | --------------------------------- |
+| `:date` | ISO date | The date the fetch statistics for |
+
+#### Example Request
+
+```sh
+GET /api/stats/2024-01-01
+```
+
+#### Example Response
+
+```json
+{
+  "date": "2024-01-01",
+  "data": [
+    {
+      "startTime": "2024-01-01 00:00:00",
+      "productionAmount": 43602,
+      "consumptionAmount": 7754.515993,
+      "hourlyPrice": 4.961
+    },
+    ...
+  ]
+}
+```
 
 ## Running the project
 
